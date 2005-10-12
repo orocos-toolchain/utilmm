@@ -1,5 +1,5 @@
 # -*- Makefile -*-
-# $Id: Makefile.in 1006 2005-10-10 12:56:08Z sjoyeux $
+# $Id: Makefile.in 1046 2005-10-12 14:00:07Z fpy $
 
 top_srcdir=@top_srcdir@
 top_builddir=@top_builddir@
@@ -13,7 +13,7 @@ include $(top_builddir)/mk/init.mk
 MODULE = singleton
 
 # read info libtool about these variables
-singleton_CPPFLAGS = $(BOOST_THREAD_CFLAGS)
+singleton_CPPFLAGS = $(BOOST_THREAD_CPPFLAGS)
 singleton_LDFLAGS = $(BOOST_THREAD_LDFLAGS)
 
 singleton_SRC = dummy.cc server.cc

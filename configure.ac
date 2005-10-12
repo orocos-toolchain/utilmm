@@ -1,5 +1,5 @@
 dnl  -*- Autoconf -*-
-dnl  $Id: configure.ac 1013 2005-10-10 15:26:10Z sjoyeux $
+dnl  $Id: configure.ac 1046 2005-10-12 14:00:07Z fpy $
 
 AC_INIT(utilmm, 0.1.0, fpy@laas.fr)
 AC_CONFIG_HEADER([utilmm/config/config.h])
@@ -61,6 +61,7 @@ AC_CONFIG_FILES(
     src/system/Makefile
     src/configfile/Makefile
     src/memory/Makefile
+    src/demangle/Makefile
 
     test/Makefile
 )

@@ -1,20 +1,20 @@
 # -*- Makefile -*-
-# $Id: Makefile.in 1046 2005-10-12 14:00:07Z fpy $
+# $Id: Makefile.in 1006 2005-10-10 12:56:08Z sjoyeux $
 
 top_srcdir=@top_srcdir@
 top_builddir=@top_builddir@
 srcdir=@srcdir@
 builddir=@builddir@
+INSTALL=@INSTALL@
 
 include $(top_builddir)/mk/init.mk
 
-############ Build module configfile
-MODULE = memory
+############ Build module singleton
+MODULE = demangle
 
-memory_CPPFLAGS = $(BOOST_CPPFLAGS)
 
-memory_SRC = dynamic_pool.cc
-############ configfile: end
+demangle_SRC = demangle.cc
+############ Singleton: end
 
 include $(top_srcdir)/mk/lib.mk
 include $(top_srcdir)/mk/depend.mk

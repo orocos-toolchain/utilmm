@@ -1,5 +1,5 @@
 # -*- Makefile -*-
-# $Id: Makefile.in 1011 2005-10-10 15:24:14Z sjoyeux $
+# $Id: Makefile.in 1046 2005-10-12 14:00:07Z fpy $
 
 top_srcdir=@top_srcdir@
 top_builddir=@top_builddir@
@@ -7,7 +7,7 @@ srcdir=@srcdir@
 builddir=@builddir@
 
 include $(top_builddir)/mk/init.mk
-SUBDIRS=singleton system configfile memory
+SUBDIRS=singleton system configfile memory demangle
 
 ############ Build module utilmm
 MODULE = utilmm
@@ -17,7 +17,7 @@ LIB_NAME = utilmm
 utilmm_VERSION = 0
 utilmm_AGE = 0
 utilmm_REVISION = 1
-utilmm_LIBS = system/libsystem.la configfile/libconfigfile.la singleton/libsingleton.la memory/libmemory.la
+utilmm_LIBS = system/libsystem.la configfile/libconfigfile.la singleton/libsingleton.la memory/libmemory.la demangle/libdemangle.la
 ############ end: name
 
 ## Build the library

@@ -81,7 +81,8 @@ AC_TRY_RUN( [
 #include <stddef.h>
 
 #if ! (defined(__MT__) || defined(_MT) || defined(_REENTRANT) \
-    || defined(_PTHREADS) || defined(_POSIX_THREADS))
+    || defined(_PTHREADS) || defined(_POSIX_THREADS) ) \
+    && !defined(__APPLE__) 
     # error "not in threading mode"
 #endif
 
