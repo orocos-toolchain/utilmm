@@ -1,0 +1,10 @@
+prefix=/opt
+exec_prefix=/opt/i386-linux
+libdir=/opt/i386-linux/lib
+includedir=/opt/include/test
+
+Name: test_pkgconfig
+Description: This is a pkgconfig test
+Version: 0.1
+Libs: -L${libdir} -lpkgconfig_test
+Cflags: -I${includedir} -DB21R

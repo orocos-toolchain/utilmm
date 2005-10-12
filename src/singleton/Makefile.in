@@ -1,0 +1,24 @@
+# -*- Makefile -*-
+# $Id: Makefile.in 1006 2005-10-10 12:56:08Z sjoyeux $
+
+top_srcdir=@top_srcdir@
+top_builddir=@top_builddir@
+srcdir=@srcdir@
+builddir=@builddir@
+INSTALL=@INSTALL@
+
+include $(top_builddir)/mk/init.mk
+
+############ Build module singleton
+MODULE = singleton
+
+# read info libtool about these variables
+singleton_CPPFLAGS = $(BOOST_THREAD_CFLAGS)
+singleton_LDFLAGS = $(BOOST_THREAD_LDFLAGS)
+
+singleton_SRC = dummy.cc server.cc
+############ Singleton: end
+
+include $(top_srcdir)/mk/lib.mk
+include $(top_srcdir)/mk/depend.mk
+

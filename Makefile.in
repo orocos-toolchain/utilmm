@@ -1,0 +1,31 @@
+# -*- Makefile -*-
+# $Id: Makefile.in 1006 2005-10-10 12:56:08Z sjoyeux $
+#
+
+top_srcdir=@srcdir@
+top_builddir=@builddir@
+srcdir=@srcdir@
+builddir=@builddir@
+INSTALL=@INSTALL@
+
+include $(top_builddir)/mk/init.mk
+
+SUBDIRS = src utilmm
+
+.PHONY: build doc
+
+ifeq ($(HAVE_DOX), yes)
+doc: Doxyfile
+	$(DOXYGEN) Doxyfile
+else
+doc:
+endif
+
+install:
+	@echo "Installing pkg-config file"
+	@$(INSTALL) -d $(pkgconfigdir)
+	@$(INSTALL) utilmm.pc $(pkgconfigdir)
+
+include $(top_srcdir)/mk/recurse.mk
+include $(top_srcdir)/mk/autotools-root.mk
+

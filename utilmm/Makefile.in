@@ -1,0 +1,9 @@
+top_srcdir=@top_srcdir@
+top_builddir=@top_builddir@
+srcdir=@srcdir@
+builddir=@builddir@
+INSTALL=@INSTALL@
+
+include $(top_builddir)/mk/init.mk
+include $(top_srcdir)/mk/include.mk
+

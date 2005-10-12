@@ -1,0 +1,16 @@
+top_srcdir=@top_srcdir@
+top_builddir=@top_builddir@
+srcdir=@srcdir@
+builddir=@builddir@
+
+include $(top_builddir)/mk/init.mk
+
+UNIT_TEST=utilmm
+utilmm_CPPFLAGS = $(BOOST_FILESYSTEM_CPPFLAGS)
+utilmm_LDFLAGS = \
+	$(top_builddir)/src/system/libutilmm_system.la \
+	$(top_builddir)/src/configfile/libutilmm_configfile.la \
+	$(BOOST_FILESYSTEM_LDFLAGS)
+
+include $(top_srcdir)/mk/test.mk
+

@@ -1,0 +1,23 @@
+# -*- Makefile -*-
+# $Id: Makefile.in 1006 2005-10-10 12:56:08Z sjoyeux $
+
+top_srcdir=@top_srcdir@
+top_builddir=@top_builddir@
+srcdir=@srcdir@
+builddir=@builddir@
+INSTALL=@INSTALL@
+
+include $(top_builddir)/mk/init.mk
+
+############ Build module system
+MODULE = system
+
+system_CPPFLAGS = $(BOOST_THREAD_CFLAGS) $(BOOST_FILESYSTEM_CFLAGS)
+system_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS)
+
+system_SRC = process.cc tempfile.cc
+############ system: end
+
+include $(top_srcdir)/mk/lib.mk
+include $(top_srcdir)/mk/depend.mk
+

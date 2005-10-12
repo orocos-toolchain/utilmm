@@ -1,0 +1,22 @@
+# -*- Makefile -*-
+# $Id: Makefile.in 1006 2005-10-10 12:56:08Z sjoyeux $
+
+top_srcdir=@top_srcdir@
+top_builddir=@top_builddir@
+srcdir=@srcdir@
+builddir=@builddir@
+
+include $(top_builddir)/mk/init.mk
+
+############ Build module configfile
+MODULE = configfile
+
+configfile_CPPFLAGS = $(BOOST_REGEX_CPPFLAGS)
+configfile_LDFLAGS = $(BOOST_REGEX_LDFLAGS)
+
+configfile_SRC = configset.cc configfile.cc commandline.cc shell_expand.cc pkgconfig.cc
+############ configfile: end
+
+include $(top_srcdir)/mk/lib.mk
+include $(top_srcdir)/mk/depend.mk
+

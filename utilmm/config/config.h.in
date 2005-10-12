@@ -1,0 +1,20 @@
+#ifndef UTILMM_CONFIG_H
+#define UTILMM_CONFIG_H
+
+#ifndef pid_t
+/* Define to `int' if <sys/types.h> does not define. */
+#undef pid_t
+#endif
+
+#ifndef size_t
+/* Define to `unsigned' if <sys/types.h> does not define. */
+#undef size_t
+#endif
+
+#ifndef RETSIGTYPE
+/* Define to the return value of signal handlers */
+#undef RETSIGTYPE
+#endif
+
+#endif
+
