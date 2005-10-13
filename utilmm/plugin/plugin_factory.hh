@@ -116,7 +116,7 @@ namespace utilmm { namespace plugin {
     {        
         plugin_factory(const dll& d)
         {
-            m_dll = d;
+            this->m_dll = d;
         }
     };
 

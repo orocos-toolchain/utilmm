@@ -38,11 +38,11 @@ namespace utilmm { namespace plugin {
 
         template<typename SymbolType>
         boost::shared_ptr<
-            typename remove_pointer<SymbolType>::type> 
+            typename boost::remove_pointer<SymbolType>::type> 
         get(const std::string& symbol_name) const
         {
             // TODO: static assert that SymbolType is a pointer.
-            typedef typename remove_pointer<SymbolType>::type PointedType;
+            typedef typename boost::remove_pointer<SymbolType>::type PointedType;
             
             // Open the library. Yes, we do it on every access to 
             // a symbol, see the design discussion in the documentation.
@@ -62,7 +62,7 @@ namespace utilmm { namespace plugin {
 
             boost::shared_ptr<PointedType> result(s, 
                                                   //killer(handle));
-                                                  bind(dlclose, handle));
+                                                  boost::bind(dlclose, handle));
             
             return result;            
         }        
