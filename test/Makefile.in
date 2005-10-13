@@ -7,10 +7,9 @@ include $(top_builddir)/mk/init.mk
 
 UNIT_TEST=utilmm
 utilmm_CPPFLAGS = $(BOOST_FILESYSTEM_CPPFLAGS)
-utilmm_LDFLAGS = \
-	$(top_builddir)/src/system/libutilmm_system.la \
-	$(top_builddir)/src/configfile/libutilmm_configfile.la \
+utilmm_LDFLAGS  = $(top_builddir)/src/libutilmm.la \
 	$(BOOST_FILESYSTEM_LDFLAGS)
 
 include $(top_srcdir)/mk/test.mk
+include $(top_srcdir)/mk/depend.mk
 
