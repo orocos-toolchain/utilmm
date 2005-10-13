@@ -1,3 +1,6 @@
+# $Revision: 1063 $
+# $Id: test.mk 1063 2005-10-13 08:46:17Z sjoyeux $
+
 ifneq (1,$(HAS_TEST_SUPPORT))
     $(error Test support not enabled)
 endif

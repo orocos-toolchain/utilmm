@@ -1,3 +1,6 @@
+# $Revision: 1063 $
+# $Id: include.mk 1063 2005-10-13 08:46:17Z sjoyeux $
+
 build:
 clean:
 

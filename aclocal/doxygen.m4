@@ -1,18 +1,21 @@
-dnl -*- autoconf -*-
-dnl $Id: doxygen.m4 949 2005-02-11 14:51:00Z fpy $
+dnl $Rev: 1063 $
+dnl $Id: doxygen.m4 1063 2005-10-13 08:46:17Z sjoyeux $
 
-AC_DEFUN([FPY_INIT_DOXYGEN], 
+dnl -*- autoconf -*-
+dnl $Id: doxygen.m4 1063 2005-10-13 08:46:17Z sjoyeux $
+
+AC_DEFUN([CLBS_INIT_DOXYGEN], 
   [
     # files
     AC_SUBST([DX_CONFIG], [ifelse([$1], [], Doxyfile, [$1])]) 
     AC_SUBST([DX_DOCDIR], [ifelse([$2], [], doc, [$2])]) 
  
-    FPY_DX_PATH="" 
+    DX_PATH="" 
 
     AC_ARG_WITH(doxygen,
 	AC_HELP_STRING([--with-doxygen=PATH]
 	               [absolute path where to find doxygen]),
-	[FPY_DX_PATH="$withval"])
+	[DX_PATH="$withval"])
     FPY_PATH_PROG(DX_CMD, doxygen, 
 	[
 	   FPY_PATH_PROG(DX_PERL, perl, 
@@ -23,6 +26,8 @@ AC_DEFUN([FPY_INIT_DOXYGEN],
     	       AC_SUBST([DX_HAVE_DOT])
                AC_SUBST([DX_DOT], [`FPY_DIRNAME_EXPR($DX_DOT)`])
 	     ], [$3])
-	] ,[$3], [$FPY_DX_PATH])
+	] ,[$3], [$DX_PATH])
 
   ])
+
+# vim: ts=8

@@ -1,3 +1,6 @@
+dnl $Rev: 1063 $
+dnl $Id: apr_threads.m4 1063 2005-10-13 08:46:17Z sjoyeux $
+
 dnl -----------------------------------------------------------------
 dnl apr_threads.m4: APR's autoconf macros for testing thread support
 dnl

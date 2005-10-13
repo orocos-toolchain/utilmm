@@ -1,7 +1,7 @@
-dnl -*- autoconf -*-
-dnl $Id: boost.m4 1008 2005-10-10 13:19:23Z sjoyeux $
+dnl $Rev: 1063 $
+dnl $Id: boost.m4 1063 2005-10-13 08:46:17Z sjoyeux $
 
-AC_DEFUN([FPY_LIB_BOOST],
+AC_DEFUN([CLBS_CHECK_BOOST],
  [
   AC_SUBST(BOOST_CPPFLAGS)
   AC_SUBST(BOOST_LDFLAGS)
@@ -62,7 +62,7 @@ AC_DEFUN([CLBS_BOOST_SUBLIB_DEFINE],
 dnl CLBS_BOOST_SUBLIB(libname, library, header, class, [if found], [if not found])
 AC_DEFUN([CLBS_BOOST_SUBLIB],
 [
-  AC_REQUIRE([FPY_LIB_BOOST])
+  AC_REQUIRE([CLBS_CHECK_BOOST])
   AC_LANG_PUSH(C++)
 
   clbs_sv_$1_CPPFLAGS="$CPPFLAGS"
@@ -106,7 +106,7 @@ AC_DEFUN([CLBS_BOOST_SUBLIB],
 dnl CLBS_BOOST_THREADS([if-found], [if-not-found])
 AC_DEFUN([CLBS_BOOST_THREAD],
 [
-  AC_REQUIRE([FPY_LIB_BOOST])
+  AC_REQUIRE([CLBS_CHECK_BOOST])
   AC_REQUIRE([APR_PTHREADS_CHECK])
 
   has_working_bthreads=yes

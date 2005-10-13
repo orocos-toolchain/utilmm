@@ -1,3 +1,6 @@
+# $Revision: 1063 $
+# $Id: lib.mk 1063 2005-10-13 08:46:17Z sjoyeux $
+
 ################ Build
 build: $(MODULE)-build-lib
 
@@ -25,12 +28,15 @@ $(MODULE)_LIB_DEPENDS=$(filter %.la,$($(MODULE)_LIBS))
 ifneq ($($(MODULE)_LIB_DEPENDS),)
 $($(MODULE)_LIB_DEPENDS): recurse-build
 endif
+recurse-build:
 
 ################ Link targets
 $(MODULE)-build-lib: $(builddir)/$(build_lib)
 $(build_lib): DESCRIPTION='Linking $@ (libtool)'
 $(build_lib): $($(MODULE)_OBJS) $($(MODULE)_LIB_DEPENDS)
-	$(COMMAND_PREFIX)$(LTLD) -o $@ $($(MODULE)_ldoptions) $(LDFLAGS) $($(MODULE)_LDFLAGS) $(LIBS) $^
+	$(COMMAND_PREFIX)$(LTLD) -o $@ $($(MODULE)_ldoptions) \
+                $(LDFLAGS) $($(MODULE)_LDFLAGS) $($(MODULE)_LIBS) $(LIBS) \
+                $($(MODULE)_OBJS)
 
 include $(top_srcdir)/mk/compile.mk
 

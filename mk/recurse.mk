@@ -1,5 +1,5 @@
-# -*- Makefile -*-
-# $Id: recurse.mk 1010 2005-10-10 13:25:49Z sjoyeux $
+# $Revision: 1063 $
+# $Id: recurse.mk 1063 2005-10-13 08:46:17Z sjoyeux $
 
 ifdef SUBDIRS 
 build: recurse-build

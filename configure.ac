@@ -1,5 +1,5 @@
 dnl  -*- Autoconf -*-
-dnl  $Id: configure.ac 1046 2005-10-12 14:00:07Z fpy $
+dnl  $Id: configure.ac 1063 2005-10-13 08:46:17Z sjoyeux $
 
 AC_INIT(utilmm, 0.1.0, fpy@laas.fr)
 AC_CONFIG_HEADER([utilmm/config/config.h])
@@ -17,7 +17,7 @@ CLBS_PROG_CXX
 
 HAVE_DOX="yes" 
 
-FPY_INIT_DOXYGEN( , , [
+CLBS_INIT_DOXYGEN( , , [
   AC_MSG_WARN("Cannot find doxygen")
   HAVE_DOX="no"
 ])
@@ -29,14 +29,11 @@ AC_SUBST(LIBTOOL_DEPS)
 AC_PROG_INSTALL
 
 dnl Enable PCH support
-AC_PCH_SUPPORT
+CLBS_PCH_SUPPORT
 CLBS_DEBUG_OPTIONS
 
-dnl check for libraries
-
-FPY_LIB_BOOST(, [AC_MSG_ERROR([Unable to find Boost libraries])])
-
-dnl Check for pthread support, needed for boost::threads
+dnl Check boost
+CLBS_CHECK_BOOST(, [AC_MSG_ERROR([Unable to find Boost libraries])])
 CLBS_BOOST_THREAD([], [AC_MSG_ERROR([Unable to find the Boost/Thread library])])
 CLBS_BOOST_REGEX([], [AC_MSG_ERROR([Unable to find the Boost/Regex library])])
 CLBS_BOOST_FILESYSTEM([], [AC_MSG_ERROR([Unable to find the Boost/Filesystem library])])

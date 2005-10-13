@@ -1,4 +1,6 @@
-# -*- Makefile -*-
+# $Revision: 1063 $
+# $Id: init.mk.in 1063 2005-10-13 08:46:17Z sjoyeux $
+
 prefix       = @prefix@
 exec_prefix  = @exec_prefix@
 bindir       = @bindir@

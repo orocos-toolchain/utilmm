@@ -1,3 +1,6 @@
+# $Revision: 1063 $
+# $Id: compile.mk 1063 2005-10-13 08:46:17Z sjoyeux $
+
 %.lo: DESCRIPTION="Compiling $(notdir $@) (libtool)"
 	
 %.lo: %.c

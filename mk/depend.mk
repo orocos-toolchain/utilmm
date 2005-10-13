@@ -1,6 +1,5 @@
-# -*- Makefile -*-
-# $Id: depend.mk 1005 2005-10-10 12:55:52Z sjoyeux $
-#
+# $Revision: 1063 $
+# $Id: depend.mk 1063 2005-10-13 08:46:17Z sjoyeux $
 
 DEP_FILES += $(patsubst %.c,%.dep,$(DEP_SRC:.cc=.dep))
 
