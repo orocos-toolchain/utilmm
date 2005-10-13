@@ -1,9 +1,10 @@
-# $Revision: 1063 $
-# $Id: lib.mk 1063 2005-10-13 08:46:17Z sjoyeux $
+# $Revision: 1082 $
+# $Id: lib.mk 1082 2005-10-13 15:13:41Z sjoyeux $
 
 ################ Build
 build: $(MODULE)-build-lib
 
+$(MODULE)_INSTALLDIR ?= $(libdir)
 $(MODULE)_OBJS=	$(patsubst %.cc,%.lo,$($(MODULE)_SRC:%.c=%.lo))
 
 ################ Check if it is a convenience library or a plain one
@@ -15,13 +16,13 @@ else
 LIB_NAME ?= $(PACKAGE)_$(MODULE)
 build_lib = lib$(LIB_NAME).la
 
-$(MODULE)_ldoptions = -rpath $(libdir) -version-info $($(MODULE)_VERSION):$($(MODULE)_REVISION):$($(MODULE)_AGE)
+$(MODULE)_ldoptions = -rpath $($(MODULE)_INSTALLDIR) -version-info $($(MODULE)_VERSION):$($(MODULE)_REVISION):$($(MODULE)_AGE)
 
-install: $(libdir)/$(build_lib)
-$(libdir)/$(build_lib): DESCRIPTION='Installing $(notdir $@) (libtool)'
-$(libdir)/$(build_lib): $(build_lib)
-	$(INSTALL_DIR) $(libdir)
-	$(COMMAND_PREFIX)$(INSTALL_LIB) $(build_lib) $(libdir)
+install: $($(MODULE)_INSTALLDIR)/$(build_lib)
+$($(MODULE)_INSTALLDIR)/$(build_lib): DESCRIPTION='Installing $(notdir $@) (libtool)'
+$($(MODULE)_INSTALLDIR)/$(build_lib): $(build_lib)
+	$(INSTALL_DIR) $($(MODULE)_INSTALLDIR)
+	$(COMMAND_PREFIX)$(INSTALL_LIB) $(build_lib) $($(MODULE)_INSTALLDIR)
 endif
 
 $(MODULE)_LIB_DEPENDS=$(filter %.la,$($(MODULE)_LIBS))
