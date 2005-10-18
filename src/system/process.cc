@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include <iostream>
+#include <boost/filesystem/exception.hpp>
 
 using std::list;
 using std::string;
@@ -19,43 +20,24 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
+using namespace boost::filesystem;
+
 
 namespace utilmm
 {
-    process::output_file::output_file()
-        : m_path(), m_handle(InvalidHandle), m_close(true) {}
-    process::output_file::~output_file()
-    { set("", InvalidHandle); }
-
-    void process::output_file::close_on_exit()
+    bool process::output_file::is_null() const
     {
-        if (m_close && m_handle != InvalidHandle)
-            close(m_handle);
-        m_handle = InvalidHandle;
+        try { handle<int>(); }
+        catch(std::bad_cast) { return true; }
+        return false;
     }
-    void process::output_file::set(std::string const& path, int handle, bool close)
-    {
-        close_on_exit();
-
-        m_path = path;
-        m_handle = handle;
-        m_close = close;
-    }
-    bool process::output_file::is_null() const { return m_path.empty(); }
 
     void process::output_file::redirect(FILE* stream)
     {
         if (is_null())
             return;
 
-        if (m_handle == InvalidHandle)
-        {
-            m_handle = open(m_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
-            if (m_handle == InvalidHandle)
-                throw unix_error();
-        }
-
-        if (dup2(m_handle, fileno(stream)) < 0)
+        if (dup2(handle<int>(), fileno(stream)) < 0)
             throw unix_error();
     }
 }
@@ -95,7 +77,7 @@ namespace
     RETSIGTYPE sigint_handler(int signum)
     {
         for (ProcessList::iterator it = processes.begin(); it != processes.end(); ++it)
-            (*it)->kill();
+            (*it)->signal();
 
         if (old_sigint_handler)
             old_sigint_handler(signum);
@@ -132,52 +114,75 @@ process::process()
 process::~process()
 { 
     deregister_process(m_handle);
-    kill(); 
+    signal(); 
     wait(true);
 }
 
-std::string process::workdir() const { return m_wdir; }
-void        process::set_workdir(const std::string& wdir)
+boost::filesystem::path process::workdir() const { return m_wdir; }
+void        process::set_workdir(boost::filesystem::path const& wdir)
 { m_wdir = wdir; }
 
-list<string> process::arguments() const { return m_arguments; }
-void         process::push(const std::string& argument) { m_arguments.push_back(argument); }
+list<string> process::cmdline() const { return m_cmdline; }
+void         process::push(const std::string& argument) { m_cmdline.push_back(argument); }
 process&     process::operator << (std::string const& newarg)
 { 
     push(newarg); 
     return *this;
 }
-void         process::clear() { m_arguments.clear(); }
+void         process::clear() { m_cmdline.clear(); }
 
-std::string process::redirection(Stream stream) const
-{
-    switch(stream)
-    {
-        case Stdout: return m_stdout.m_path;
-        case Stderr: return m_stderr.m_path;
-    };
-    return "";
-}
+
+
+
 void process::erase_redirection(Stream stream) { redirect_to(stream, ""); }
-void process::redirect_to( Stream stream, std::string const& file, int fileno, bool close_on_quit )
+void process::redirect_to( Stream stream, boost::filesystem::path const& file)
+{
+    int handle = open(file.native_file_string().c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    if (handle == -1)
+        throw unix_error();
+
+    redirect_to(stream, handle, true);
+}
+
+void process::redirect_to( Stream stream, FILE* handle, bool close_on_exit)
+{
+    redirect_to(stream, dup(fileno(handle)), close_on_exit);
+    if (close_on_exit)
+        fclose(handle);
+}
+
+void process::redirect_to( Stream stream, int handle, bool close_on_exit)
+{
+    if (!close_on_exit)
+    {
+        handle = dup(handle);
+        if (handle == -1)
+            throw unix_error();
+    }
+    get_stream(stream).reset(handle);
+}
+
+process::output_file& process::get_stream(Stream stream)
 {
     switch(stream)
     {
-        case Stdout: 
-          m_stdout.set(file, fileno, close_on_quit); 
-          break;
-        case Stderr: 
-          m_stderr.set(file, fileno, close_on_quit);
-          break;
-    };
+        case Stdout: return m_stdout;
+        case Stderr: return m_stderr;
+    }
+
+    // Never reached
+    assert(false);
+    return m_stdout;
 }
 
+static const int CHDIR_ERROR = 0;
+static const int EXEC_ERROR  = 1;
 void process::start()
 {
     if (running())
         throw already_running();
 
-    list<string> argv = m_arguments;
+    list<string> argv = m_cmdline;
     Env          env  = m_env;
 
     int pc_comm[2];
@@ -190,17 +195,13 @@ void process::start()
         throw unix_error(errno);
     else if (child_pid)
     {
-        // if close_on_exit is active, we should close
-        // on the parent side. The fd's are still open on the child side
-        m_stdout.close_on_exit();
-        m_stderr.close_on_exit();
+        // close fds on the parent side
+        m_stdout.close();
+        m_stderr.close();
+        write_guard.close();
 
-        int start_status;
-        close(pc_comm[1]);
-        if (read(pc_comm[0], &start_status, sizeof(start_status)) != 0)
-        { // a problem occured while exec'ing
-            throw unix_error(errno);
-        }
+        // wait for the exec() to happen
+        process_child_error(pc_comm[0]);
 
         m_pid = child_pid;
         m_running = true;
@@ -214,6 +215,7 @@ void process::start()
 
         m_stdout.redirect(stdout);
         m_stderr.redirect(stderr);
+        read_guard.close();
 
         for (Env::const_iterator it = env.begin(); it != env.end(); ++it)
         {
@@ -221,13 +223,45 @@ void process::start()
             putenv( const_cast<char*>(putenv_arg.c_str()) );
         }
 
+        if (!m_wdir.empty())
+        {
+            if (chdir(m_wdir.native_file_string().c_str()) == -1)
+                send_child_error(pc_comm[1], CHDIR_ERROR);
+        }
+            
         execvp(prog, exec_argv);
 
         // Error if reached
-        int error = errno;
-        write(pc_comm[1], &error, sizeof(error));
-        exit(1);
+        send_child_error(pc_comm[1], EXEC_ERROR);
     }
+}
+
+void process::process_child_error(int fd)
+{
+    int error_type;
+    int error;
+    if (read(fd, &error_type, sizeof(error_type)) == 0)
+        return;
+    read(fd, &error, sizeof(error));
+
+    if (error_type == CHDIR_ERROR)
+    {
+        switch(error) 
+        {
+            case ENOMEM:  throw filesystem_error("chdir", m_wdir, out_of_memory_error);
+            case ENOTDIR: throw filesystem_error("chdir", m_wdir, not_directory_error);
+            default: throw filesystem_error("chdir", m_wdir, security_error);
+        }
+    }
+    else throw unix_error(error);
+}
+
+void process::send_child_error(int fd, int error_type)
+{
+    int error = errno;
+    write(fd, &error_type, sizeof(error_type));
+    write(fd, &error, sizeof(error));
+    exit(1);
 }
 
 void process::detach()
@@ -235,15 +269,19 @@ void process::detach()
     m_running = false;
     m_pid = 0;
 }
-bool process::kill(int signo)
+void process::signal(int signo)
 { 
-    if (running())
-        return (::kill(m_pid, signo) == 0); 
-    return true;
+    if (!running())
+        return;
+
+    if (::kill(m_pid, signo) == 0)
+        return;
+
+    if (errno != ESRCH)
+        throw unix_error();
 }
 
-bool process::wait()
-{ return wait(true); }
+void process::wait() { wait(true); }
 bool process::wait(bool hang)
 {
     int status;
@@ -253,15 +291,18 @@ bool process::wait(bool hang)
     { wait_ret = waitpid(m_pid, &status, (hang ? 0 : WNOHANG) ); }
     while (wait_ret == -1 && errno == EINTR);
     
-    if (wait_ret == -1)
+    if (!hang && wait_ret == 0)
         return false;
+
+    // We consider that ECHILD means the process has terminated
+    // EINTR is taken care of
+    // EINVAL is an internal error
 
     m_running = false;
     m_normalexit = WIFEXITED(status);
     if (m_normalexit)
         m_status = WEXITSTATUS(status);
     else m_status = 0;
-
     return true;
 }
 

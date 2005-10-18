@@ -1,5 +1,5 @@
 # -*- Makefile -*-
-# $Id: Makefile.in 1046 2005-10-12 14:00:07Z fpy $
+# $Id: Makefile.in 1102 2005-10-18 16:15:54Z sjoyeux $
 
 top_srcdir=@top_srcdir@
 top_builddir=@top_builddir@
@@ -15,7 +15,7 @@ MODULE = system
 system_CPPFLAGS = $(BOOST_THREAD_CPPFLAGS) $(BOOST_FILESYSTEM_CPPFLAGS)
 system_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS)
 
-system_SRC = process.cc tempfile.cc
+system_SRC = process.cc system.cc
 ############ system: end
 
 include $(top_srcdir)/mk/lib.mk

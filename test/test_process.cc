@@ -1,7 +1,5 @@
 #include "testsuite.hh"
 #include <utilmm/system/process.hh>
-#include <utilmm/system/system.hh>
-#include <utilmm/system/tempfile.hh>
 
 using namespace boost::filesystem;
 using namespace utilmm;
@@ -11,36 +9,43 @@ class TC_Process
 public:
     TC_Process()
     {
-            testdir = path(__FILE__).branch_path();
+        testdir = path(__FILE__).branch_path();
     }
 
     void test_run()
     {
-        tempfile temp("test_process");
+        boost::filesystem::path temp = tempfile::name("bla");
         
         process copy;
         copy << "cp" 
             << (testdir/"test_pkgconfig.pc").native_file_string()
-            << temp.path().native_file_string();
+            << temp.native_file_string();
 
         copy.start();
         copy.wait();
     }
 
+    void assert_closed(int fd)
+    {
+        BOOST_REQUIRE(close(fd) == -1);
+        BOOST_REQUIRE(errno == EBADF);
+    }
     void test_redirect()
     {
         int files[2];
         pipe(files);
-        auto_close guard_read(files[0]), guard_write(files[1]);
+        auto_close read_guard(files[0]);
         
         process cat;
         cat << "cat" << (testdir/"test_pkgconfig.pc").native_file_string();
 
-        cat.redirect_to(process::Stdout, "a", files[1]);
+        cat.redirect_to(process::Stdout, files[1]);
         cat.start();
 
-        BOOST_REQUIRE(close(files[1]) == -1);
-        BOOST_REQUIRE(errno == EBADF);
+        // the write pipe should be closed now. Otherwise
+        // we'll never reach EOF on files[0] and the loop
+        // will block
+        assert_closed(files[1]);
     
         std::string output;
         int read_count;

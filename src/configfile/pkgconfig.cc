@@ -63,7 +63,7 @@ string pkgconfig::run(process& prs)
     int pipeno[2];
     pipe(pipeno);
 
-    prs.redirect_to(process::Stdout, "output_pipe", pipeno[1]);
+    prs.redirect_to(process::Stdout, pipeno[1]);
     prs.redirect_to(process::Stderr, "/dev/null");
     prs.start();
 

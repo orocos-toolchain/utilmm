@@ -6,7 +6,6 @@
 using namespace utilmm;
 using namespace boost::filesystem;
 
-
 class TC_PkgConfig
 {
 public:
