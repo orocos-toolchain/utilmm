@@ -1,6 +1,7 @@
 #ifndef UTILMM_CONFIG_FILE_HH
 #define UTILMM_CONFIG_FILE_HH
 
+#include <utilmm/configfile/exceptions.hh>
 #include <utilmm/configfile/configset.hh>
 #include <string>
 
