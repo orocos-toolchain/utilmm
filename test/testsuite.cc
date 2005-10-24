@@ -16,6 +16,7 @@ init_unit_test_suite( int argc, char * argv[] ) {
     test_suite* ts_config = BOOST_TEST_SUITE( "Testing utilmm/configfile" );
     test_pkgconfig(ts_config);
     test_shellexpand(ts_config);
+    test_configfile(ts_config);
     ts->add(ts_config);
 
     return ts;

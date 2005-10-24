@@ -1,4 +1,5 @@
 #include "utilmm/configfile/configfile.hh"
+#include "utilmm/configfile/exceptions.hh"
 
 #include <boost/regex.hpp>
 
@@ -13,18 +14,26 @@ using namespace utilmm;
 using boost::regex;
 using boost::smatch;
 
-bool config_file::read(const std::string& name)
+parse_error::parse_error(int line, string const& message)
+    : line(line), message(message) {}
+
+config_file::config_file(string const& name)
 {
-    m_error = "";
+    try { read(name); }
+    catch(...) {
+        clear();
+        throw;
+    }
+}
+    
+void config_file::read(const string& name)
+{
     clear();
 
     fstream file;
     file.open(name.c_str(), fstream::in);
     if (! file.is_open()) 
-    {
-        m_error = "unable to open " + name + " for reading";
-        return false;
-    }
+        throw not_found(name);
 
     static const string
         regexp_header("^[[:blank:]]*"),
@@ -42,12 +51,16 @@ bool config_file::read(const std::string& name)
 
     config_set* cur_set = this;
     
+    int line_number = 0;
     stringbuf linebuf;
     const string empty_string;
     while (! file.eof())
     {
         while (file.peek() == '\n')
+        {
+            ++line_number;
             file.ignore();
+        }
 
         file.get(linebuf);
         const string line(linebuf.str());
@@ -59,10 +72,8 @@ bool config_file::read(const std::string& name)
         if (mode == FindBracket)
         {
             if (! regex_match(line, rx_open_bracket))
-            {
-                m_error = "Expected '{', found " + line;
-                return false;
-            }
+                throw parse_error(line_number, "Expected '{', found " + line);
+
             mode = Normal;
         }
         else if (regex_match(line, result, rx_name))
@@ -82,39 +93,21 @@ bool config_file::read(const std::string& name)
                 cur_set = new_set;
             }
             else if (regex_match(value, attribute_value, rx_attribute)) 
-            {
                 cur_set->insert( name, attribute_value[1] );
-            }
             else
-            {
-                m_error = "Syntax error in " + value;
-                return false;
-            }
+                throw parse_error(line_number, "Syntax error in " + value);
         }
         else if (regex_match(line, rx_close_bracket))
         {
-            if (cur_set -> get_parent() == 0)
-            {
-                m_error = "Unmatched bracket";
-                return false;
-            }
-            cur_set = cur_set -> get_parent();
+            if (cur_set -> parent() == 0)
+                throw parse_error(line_number, "Unmatched bracket");
+            cur_set = cur_set->parent();
         }
         else
-        {
-            m_error = "Syntax error in line " + line;
-            return false;
-        }
+            throw parse_error(line_number, "Syntax error in line " + line);
     }
 
-    if (cur_set -> get_parent())
-    {
-        m_error = "Expected closing bracket, found eof";
-        return false;
-    }
-
-    return true;
+    if (cur_set -> parent())
+        throw parse_error(line_number, "Expected '}' before end of file");
 }
-
-std::string config_file::get_error() const { return m_error; }
 

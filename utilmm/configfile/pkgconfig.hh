@@ -2,18 +2,17 @@
 #define UTILMM_CONFIGFILE_HH
 
 #include <string>
-#include <exception>
+#include <utilmm/configfile/exceptions.hh>
 
 namespace utilmm
 {
+    struct pkgconfig_error : public std::exception {};
+
     class process;
     
     class pkgconfig
     {
         typedef std::string string;
-    public:
-        struct not_found : public std::exception {};
-        struct pkgconfig_error : public std::exception {};
       
     public:
         pkgconfig(string const& name);

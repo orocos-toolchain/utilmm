@@ -1,6 +1,7 @@
 #include <utilmm/system/system.hh>
 #include <utilmm/system/process.hh>
 #include <utilmm/configfile/pkgconfig.hh>
+#include <utilmm/configfile/exceptions.hh>
 
 using namespace utilmm;
 using std::string;
@@ -9,7 +10,7 @@ pkgconfig::pkgconfig(string const& name)
     : m_name(name)
 {
     if(!exists(name))
-        throw not_found();
+        throw not_found(name);
 }
 
 pkgconfig::~pkgconfig() {}
@@ -79,8 +80,10 @@ string pkgconfig::run(process& prs)
     }
     prs.wait();
 
-    if (!prs.exit_normal()) throw pkgconfig_error();
-    if (prs.exit_status())  throw not_found();
+    if (!prs.exit_normal()) 
+        throw pkgconfig_error();
+    if (prs.exit_status())  
+        throw not_found(prs.cmdline().front());
 
     return output;
 }

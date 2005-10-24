@@ -20,7 +20,7 @@ public:
     void test_exists()
     {
         // Check for a non-existent pc file
-        BOOST_REQUIRE_THROW(new pkgconfig("doesnotexist"), pkgconfig::not_found);
+        BOOST_REQUIRE_THROW(new pkgconfig("doesnotexist"), not_found);
         // Check for an existent pc file
         pkgconfig pc("test_pkgconfig");
 

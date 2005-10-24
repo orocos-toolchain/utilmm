@@ -290,7 +290,7 @@ namespace utilmm
 
             if (option_object -> isMultiple())
             {
-                std::string value (config->get_string(config_key, ""));
+                std::string value (config->get<std::string>(config_key, ""));
                 if (! value.empty())
                     value += option_object->getMultipleSeparator();
                 value += config_value;

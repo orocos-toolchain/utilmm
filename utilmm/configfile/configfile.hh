@@ -1,28 +1,36 @@
 #ifndef UTILMM_CONFIG_FILE_HH
 #define UTILMM_CONFIG_FILE_HH
 
-#include "utilmm/configfile/configset.hh"
+#include <utilmm/configfile/configset.hh>
 #include <string>
 
 namespace utilmm
 {
+    struct parse_error : public std::exception
+    {
+        int const         line;
+        std::string const message;
+
+        explicit parse_error(int line, std::string const& message);
+        ~parse_error() throw() {}
+    };
+
     /** A configuration file
      * Reads a configuration file using \c read. Once
      * it has been read, this object is to be used
      * as a top-level scope (ConfigSet) */
     class config_file : public config_set
     {
-        std::string m_error;
+    private:
+        void read(const std::string& name);
+
     public:
 
         /** Read a configuration file
          * @arg name the file path
-         * @return true on success, false on failure. See getError
-         * to get a exhaustive error string */
-        bool read(const std::string& name);
-
-        /** Get the last error that happened in \c read */
-        std::string get_error() const;
+         * @throw parse_error
+         */
+        config_file(const std::string& name);
     };
 }
 
