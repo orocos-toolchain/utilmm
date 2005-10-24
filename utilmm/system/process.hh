@@ -115,13 +115,13 @@ namespace utilmm
          * \code
          *  process prs;
          *  tempfile tmp("basename");
-         *  prs.redirect_to(process::Stdout, "stdout", tmp.fd(), true);
+         *  prs.redirect_to(process::Stdout, tmp.fd(), true);
          * \endcode
          *
          * \par[Make process open a file]
          * \code
          *  process prs;
-         *  prs.redirect_to(process::Stdout, "my_output_file", tmp.fd(), true);
+         *  prs.redirect_to(process::Stdout, "my_output_file");
          * \endcode
          * 
          * \param stream the output stream
