@@ -62,16 +62,37 @@ public:
 
     void test_commandline()
     {
-        char const* valid_spec[] = { 
-            "*:include,I=string|include path",
-            "vkey:verbose,v?int|include path",
-            ":quiet",
-            0
+        {
+            char const* valid_spec[] = { 
+                "*:include,I=string|include path",
+                "vkey:verbose,v?int|include path",
+                ":quiet",
+                0
+            };
+
+            command_line cmdline(valid_spec);
+            check_cmdline_properties(cmdline);
+        }
+
+        char const* invalid_specs[] = {
+            "*::bla", 0,
+            ":blo=badtype", 0
         };
+        BOOST_REQUIRE_THROW( command_line cmdline(invalid_specs), bad_syntax );
+        BOOST_REQUIRE_THROW( command_line cmdline(invalid_specs + 2), bad_syntax );
 
-        BOOST_REQUIRE_NO_THROW( command_line cmdline(valid_spec) );
-        command_line cmdline(valid_spec);
+        {
+            list<string> valid_spec;
+            valid_spec.push_back("*:include,I=string|include path");
+            valid_spec.push_back("vkey:verbose,v?int|include path");
+            valid_spec.push_back(":quiet");
+            command_line cmdline(valid_spec);
+            check_cmdline_properties(cmdline);
+        }
+    }
 
+    void check_cmdline_properties(command_line& cmdline)
+    {
         config_set config;
         char* valid_argv[] = { "-I", "bla", "--include", "test", "--quiet", "--verbose", "bla.cpp" };
         
@@ -85,14 +106,6 @@ public:
         BOOST_REQUIRE( "test" ==  includes.back() || "test" == includes.front() );
         BOOST_REQUIRE_EQUAL( config.get<bool>("quiet"), true );
         BOOST_REQUIRE_EQUAL( config.get<bool>("vkey"), true );
-
-
-        char const* invalid_specs[] = {
-            "*::bla", 0,
-            ":blo=badtype", 0
-        };
-        BOOST_REQUIRE_THROW( command_line cmdline(invalid_specs), bad_syntax );
-        BOOST_REQUIRE_THROW( command_line cmdline(invalid_specs + 2), bad_syntax );
     }
 
 private:
