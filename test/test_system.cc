@@ -1,5 +1,7 @@
 #include "testsuite.hh"
 #include <utilmm/system/system.hh>
+#include <boost/filesystem/operations.hpp>
+#include <iostream>
 using namespace utilmm;
 
 class TC_System
@@ -27,10 +29,33 @@ public:
         }
         BOOST_REQUIRE( close(files[1]) == 0 );
     }
+
+    void test_tempfile()
+    {
+        boost::filesystem::path tmppath;
+        {
+            tempfile file("bla");
+            tmppath = file.path();
+            BOOST_REQUIRE(boost::filesystem::exists(tmppath));
+        }
+        BOOST_REQUIRE(!boost::filesystem::exists(tmppath));
+
+        {
+            tempfile file("blo");
+            tmppath = file.path();
+            std::cout << tmppath.native_file_string() << std::endl;
+            BOOST_REQUIRE(boost::filesystem::exists(tmppath));
+            file.detach();
+            BOOST_REQUIRE(boost::filesystem::exists(tmppath));
+        }
+        BOOST_REQUIRE(boost::filesystem::exists(tmppath));
+        boost::filesystem::remove(tmppath);
+    }
 };
 
 void test_system(test_suite* ts) {
     boost::shared_ptr<TC_System> instance( new TC_System );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_System::test_filetools, instance ) );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_System::test_tempfile, instance ) );
 }
 

@@ -56,26 +56,55 @@ namespace utilmm
 
     /** A temporary file. It is created on construction and
      * removed on destruction */
-    class tempfile : public utilmm::auto_close
+    class tempfile : boost::noncopyable
     {
+        boost::filesystem::path m_path;
+        auto_close              m_guard;
+        
     public:
         /** Create a temporary file.
-         * Throws unix_error on error
+         * If you use this constructor, you cannot have the file name.
+         * You'll have to use only the file handle.
+         *
+         * @throw unix_error
          */
         tempfile();
+
+        /** Close and destroy the file */
+        ~tempfile();
+
+        /** Create a temporary file using a base name
+         * The file name is available using path()
+         *
+         * The tempfile() version is more secure. Use only this 
+         * constructor if you need the file path
+         */
+        tempfile(std::string const& basename);
 
         /** Disassociates this object from the temporary file
          * After a call to disassociate(), path() and fd() are
          * no longer available
-         * @return the file path */
+         *
+         * @return the file path 
+         */
         FILE* detach();
 
-        /** Get a temporary name
+        /** Wrapper around mkstemp
          * Do not use this function to create a temporary file
          * Use a tempfile object instead
          */
-        static boost::filesystem::path name(std::string const& basename);
+        static FILE* tempfile::mkstemp(std::string const& base, boost::filesystem::path& path);
 
+        /** Get the file path
+         * The file path is only available if the <tt>tempfile(std::string)</tt>
+         * constructor has been used.
+         * @return the file path or an empty path if it is not available
+         */
+        boost::filesystem::path path() const;
+
+        /** Get the underlying file handle */
+        FILE* handle() const;
+        
         /** Creates a temporary file
          * \param[out]  path        the file path
          * \return      the file descriptor to the open file

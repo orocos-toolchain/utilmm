@@ -1,4 +1,5 @@
 #include <utilmm/system/system.hh>
+#include <boost/filesystem/operations.hpp>
 #include <vector>
 
 using namespace utilmm;
@@ -65,7 +66,7 @@ FILE* tempfile::create()
     return fd;
 }
 
-boost::filesystem::path tempfile::name(std::string const& base)
+FILE* tempfile::mkstemp(std::string const& base, boost::filesystem::path& path)
 {
     int const base_length(base.length());
 
@@ -75,21 +76,43 @@ boost::filesystem::path tempfile::name(std::string const& base)
     memset(&value[base_length], 'X', 6);
     value[base_length + 6] = '\0';
 
-    int handle = mkstemp(&value[0]);
+    int handle = ::mkstemp(&value[0]);
     if (handle < 0)
         throw unix_error();
-    ::close(handle);
-    return &value[0];
+
+    path = std::string(&value[0]);
+    return fdopen(handle, "w");
 }
 
+tempfile::tempfile(std::string const& base)
+    : m_path(), m_guard(mkstemp(base, m_path))
+{
+    if (! handle())
+        throw unix_error();
+}
 
 tempfile::tempfile()
-    : auto_close(create()) {}
+    : m_guard(create()) {}
 
+tempfile::~tempfile() 
+{
+    if (! m_path.empty())
+    {
+        try {
+            m_guard.close();
+            boost::filesystem::remove(m_path);
+        } catch(...) {}
+    }
+}
+
+FILE* tempfile::handle() const { return m_guard.handle<FILE*>(); }
 FILE* tempfile::detach()
 {
-    FILE* h = handle<FILE*>();
-    auto_close::detach();
+    FILE* h = handle();
+    m_guard.detach();
+    m_path = boost::filesystem::path();
     return h;
 }
+
+boost::filesystem::path tempfile::path() const { return m_path; }
 

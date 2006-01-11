@@ -14,15 +14,17 @@ public:
 
     void test_run()
     {
-        boost::filesystem::path temp = tempfile::name("bla");
+        tempfile tmpfile("bla");
         
         process copy;
         copy << "cp" 
             << (testdir/"test_pkgconfig.pc").native_file_string()
-            << temp.native_file_string();
+            << tmpfile.path().native_file_string();
 
         copy.start();
         copy.wait();
+        BOOST_REQUIRE(copy.exit_normal());
+        BOOST_REQUIRE(!copy.exit_status());
     }
 
     void assert_closed(int fd)
@@ -58,6 +60,8 @@ public:
         } while(read_count);
 
         cat.wait();
+        BOOST_REQUIRE(cat.exit_normal());
+        BOOST_REQUIRE(!cat.exit_status());
     }
 
 private:
