@@ -299,10 +299,14 @@ bool process::wait(bool hang)
     // EINVAL is an internal error
 
     m_running = false;
-    m_normalexit = WIFEXITED(status);
-    if (m_normalexit)
-        m_status = WEXITSTATUS(status);
-    else m_status = 0;
+
+    if (wait_ret != -1) // no status information if wait_ret == -1
+    {
+        m_normalexit = WIFEXITED(status);
+        if (m_normalexit)
+            m_status = WEXITSTATUS(status);
+        else m_status = 0;
+    }
     return true;
 }
 
