@@ -10,9 +10,19 @@ using namespace std;
 
 
 namespace {
+
+    char advance(std::string const& source, std::string const& allowed, size_t& current, std::string& text)
+    {
+        size_t next = source.find_first_of(allowed, current);
+        text = string(source, current, next - current);
+        current = next;
+
+        return (next == string::npos) ? 0 : source[current];
+    }
+    
     using namespace utilmm;
 
-    // [*:][config key]:long[,short][=value_type|?value_type][|help]
+    // [*][config key]:long[,short][=value_type|?value_type][|help]
     /** Each option description is parsed and transformed in
      * a cmdline_option object. The command_line code then
      * uses these objects
@@ -43,38 +53,58 @@ namespace {
         cmdline_option(const std::string& description)
             : m_multiple(false), m_argument(None)
         {
-            static regex rx_scandesc("(\\*)?([\\w-]*):([\\w-]+)(?:,([\\w-]))?(=[\\w-]+|\\?[\\w-]+)?(?:\\|(.*))?");
+            static regex rx_valid_identifier("[\\w-]*");
 
-            smatch match;
-            if (! regex_match(description, match, rx_scandesc))
-                throw bad_syntax(description, "invalid format");
-
-            if (match[1].matched)
-                m_multiple = true;
-            
-            m_config = match[2];
-            m_long   = match[3];
-            if (match[4].matched)
-                m_short  = match[4];
-
-            if (match[5].matched)
+            size_t current = 0;
+            if (description[current] == '*')
             {
-                std::string option_type = match[5];
-                if (*option_type.begin() == '?')
+                ++current;
+                m_multiple = true;
+            }
+
+            if (!advance(description, ":", current, m_config))
+                throw bad_syntax(description, "expected ':'");
+
+            char delim = advance(description, ",=?|", ++current, m_long);
+            if (! regex_match(m_long, rx_valid_identifier))
+                throw bad_syntax(description, "invalid identifier");
+            if (!delim) return;
+
+            std::string text;
+
+            if (delim == ',')
+            {
+                delim = advance(description, "=?|", ++current, text);
+
+                if (text.size() != 1)
+                    throw bad_syntax(description, "short option string must be only one character");
+                m_short = text;
+                if (! regex_match(m_short, rx_valid_identifier))
+                    throw bad_syntax(description, "invalid short option character");
+
+                if (! delim) return;
+            }
+
+            if (delim == '=' || delim == '?')
+            {
+                if (delim == '?')
                     m_argument |= Optional;
 
-                option_type = std::string(option_type, 1);
-                if (option_type == "int")
+                delim = advance(description, "|", ++current, text);
+
+                if (text == "int")
                     m_argument |= IntArgument;
-                else if (option_type == "string")
+                else if (text == "string")
                     m_argument |= StringArgument;
-                else if (option_type == "bool")
+                else if (text == "bool")
                     m_argument |= BoolArgument;
                 else
                     throw bad_syntax(description, "invalid option type");
+
+                if (!delim) return;
             }
 
-            m_help = match[6];
+            m_help = string(description, current + 1);
         }
 
         ~cmdline_option() { }
