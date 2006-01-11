@@ -11,6 +11,16 @@ namespace utilmm
 {
     class config_set;
    
+    class bad_syntax : public std::exception
+    {
+    public:
+        ~bad_syntax() throw() {}
+
+        std::string source, error;
+        bad_syntax(std::string const& source, std::string const& error = "")
+            : source(source), error(error) {}
+    };
+
     /** command_line handling based on getopt_long
      *
      * <h2> Description </h2>
@@ -76,8 +86,7 @@ namespace utilmm
     class command_line
     {
     private:
-        typedef std::vector<cmdline_option *> Options;
-        bool init(const std::list<std::string>& description);
+        typedef std::vector<cmdline_option> Options;
 
     public:
         /** Builds an object with a null-terminated string list
@@ -96,7 +105,7 @@ namespace utilmm
          * @param config the Config object the option values will be written to
          * @return true on success, false on failure
          */
-        bool parse(int argc, char* const argv[], config_set* config);
+        bool parse(int argc, char* const argv[], config_set& config);
 
         /** Remaining command line options
          * After all options are matched, and if no error has occured,
@@ -106,8 +115,8 @@ namespace utilmm
         std::list<std::string> remaining() const;
 
     private:
-        char*      m_getopt_short;
-        option*    m_getopt_long;
+        void add_argument(config_set& config, cmdline_option const& optdesc, std::string const& value);
+
         Options    m_options;
         std::list<std::string> m_remaining;
     };
