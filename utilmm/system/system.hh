@@ -17,8 +17,8 @@ namespace utilmm
     class unix_error : public std::exception
     {
     public:
-        explicit unix_error(int error = errno)
-            : m_error(error) {}
+        explicit unix_error(int error_ = errno)
+            : m_error(error_) {}
         ~unix_error() throw () {}
         
         int error() const { return m_error; }

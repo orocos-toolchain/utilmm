@@ -17,8 +17,8 @@ namespace utilmm
         ~bad_syntax() throw() {}
 
         std::string source, error;
-        bad_syntax(std::string const& source, std::string const& error = "")
-            : source(source), error(error) {}
+        bad_syntax(std::string const& source_, std::string const& error_ = "")
+            : source(source_), error(error_) {}
     };
 
     /** command_line handling based on getopt_long
