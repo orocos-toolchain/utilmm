@@ -6,11 +6,11 @@
 using namespace utilmm;
 using std::string;
 
-pkgconfig::pkgconfig(string const& name)
-    : m_name(name)
+pkgconfig::pkgconfig(string const& name_)
+    : m_name(name_)
 {
-    if(!exists(name))
-        throw not_found(name);
+    if(!exists(name_))
+        throw not_found(name_);
 }
 
 pkgconfig::~pkgconfig() {}

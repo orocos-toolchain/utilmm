@@ -14,8 +14,8 @@ using namespace utilmm;
 using boost::regex;
 using boost::smatch;
 
-parse_error::parse_error(int line, string const& message)
-    : line(line), message(message) {}
+parse_error::parse_error(int line_, string const& message_)
+    : line(line_), message(message_) {}
 
 config_file::config_file(string const& name)
 {
@@ -78,7 +78,7 @@ void config_file::read(const string& name)
         }
         else if (regex_match(line, result, rx_name))
         {
-            string name = result[1];
+            string key = result[1];
             string value = result[2];
 
             smatch attribute_value;
@@ -89,11 +89,11 @@ void config_file::read(const string& name)
                 mode = value.empty() ? FindBracket : Normal;
 
                 config_set* new_set = new config_set(cur_set);
-                cur_set->insert( name, new_set );
+                cur_set->insert( key, new_set );
                 cur_set = new_set;
             }
             else if (regex_match(value, attribute_value, rx_attribute)) 
-                cur_set->insert( name, attribute_value[1] );
+                cur_set->insert( key, attribute_value[1] );
             else
                 throw parse_error(line_number, "Syntax error in " + value);
         }

@@ -4,8 +4,8 @@
 using namespace std;
 using namespace utilmm;
 
-config_set::config_set(config_set* parent)
-    : m_parent(parent) {}
+config_set::config_set(config_set* parent_)
+    : m_parent(parent_) {}
 
 config_set::~config_set()
 { 

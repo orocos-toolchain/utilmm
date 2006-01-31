@@ -10,8 +10,8 @@ namespace utilmm
     {
         std::string const file;
 
-        not_found(std::string const& file)
-            : file(file) {}
+        not_found(std::string const& file_)
+            : file(file_) {}
         ~not_found() throw() {}
 
         char const* what() throw() { return file.c_str(); }
