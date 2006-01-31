@@ -1,5 +1,5 @@
 dnl  -*- Autoconf -*-
-dnl  $Id: configure.ac 1063 2005-10-13 08:46:17Z sjoyeux $
+dnl  $Id: configure.ac 1318 2006-01-31 17:21:48Z sjoyeux $
 
 AC_INIT(utilmm, 0.1.0, fpy@laas.fr)
 AC_CONFIG_HEADER([utilmm/config/config.h])
@@ -12,8 +12,6 @@ AC_LANG(C++)
 
 dnl check for programs
 AC_CANONICAL_HOST
-
-CLBS_PROG_CXX
 
 HAVE_DOX="yes" 
 

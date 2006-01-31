@@ -1,5 +1,5 @@
-# $Revision: 1082 $
-# $Id: lib.mk 1082 2005-10-13 15:13:41Z sjoyeux $
+# $Revision: 1318 $
+# $Id: lib.mk 1318 2006-01-31 17:21:48Z sjoyeux $
 
 ################ Build
 build: $(MODULE)-build-lib
@@ -18,11 +18,11 @@ build_lib = lib$(LIB_NAME).la
 
 $(MODULE)_ldoptions = -rpath $($(MODULE)_INSTALLDIR) -version-info $($(MODULE)_VERSION):$($(MODULE)_REVISION):$($(MODULE)_AGE)
 
-install: $($(MODULE)_INSTALLDIR)/$(build_lib)
-$($(MODULE)_INSTALLDIR)/$(build_lib): DESCRIPTION='Installing $(notdir $@) (libtool)'
-$($(MODULE)_INSTALLDIR)/$(build_lib): $(build_lib)
-	$(INSTALL_DIR) $($(MODULE)_INSTALLDIR)
-	$(COMMAND_PREFIX)$(INSTALL_LIB) $(build_lib) $($(MODULE)_INSTALLDIR)
+install: $(DESTDIR)$($(MODULE)_INSTALLDIR)/$(build_lib)
+$(DESTDIR)$($(MODULE)_INSTALLDIR)/$(build_lib): DESCRIPTION='Installing $(notdir $@) (libtool)'
+$(DESTDIR)$($(MODULE)_INSTALLDIR)/$(build_lib): $(build_lib)
+	$(INSTALL_DIR) $(DESTDIR)$($(MODULE)_INSTALLDIR)
+	$(COMMAND_PREFIX)$(INSTALL_LIB) $(build_lib) $(DESTDIR)$($(MODULE)_INSTALLDIR)
 endif
 
 $(MODULE)_LIB_DEPENDS=$(filter %.la,$($(MODULE)_LIBS))

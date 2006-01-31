@@ -1,5 +1,5 @@
-# $Revision: 1063 $
-# $Id: pch.mk 1063 2005-10-13 08:46:17Z sjoyeux $
+# $Revision: 1318 $
+# $Id: pch.mk 1318 2006-01-31 17:21:48Z sjoyeux $
 
 ifeq ($(USE_PCH),1)
   PCH_DIR=     $(abs_top_builddir)/$(PCH_HEADER).gch
@@ -29,6 +29,8 @@ $(PCH_DIR)/stamp-nopic: $(abs_top_srcdir)/$(PCH_HEADER)
 		-x c++ -c -o $(PCH_DIR)/cxx-nopic $(abs_top_srcdir)/$(PCH_HEADER)
 	@touch  $(PCH_DIR)/stamp-nopic
 
+else
+build-pch:
 endif
 
 pch-clean:
