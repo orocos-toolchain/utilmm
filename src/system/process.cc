@@ -217,6 +217,8 @@ void process::start()
         m_stderr.redirect(stderr);
         read_guard.close();
 
+        // must use execvp bec. we want exec to search for prog for us
+        // so, should set environment variables ourselves
         for (Env::const_iterator it = env.begin(); it != env.end(); ++it)
         {
             std::string putenv_arg = (it->first + "=" + it->second);
@@ -229,6 +231,7 @@ void process::start()
                 send_child_error(pc_comm[1], CHDIR_ERROR);
         }
             
+        fcntl(pc_comm[1], F_SETFD, FD_CLOEXEC);
         execvp(prog, exec_argv);
 
         // Error if reached

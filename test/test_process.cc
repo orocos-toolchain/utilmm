@@ -26,6 +26,14 @@ public:
         BOOST_REQUIRE(copy.exit_normal());
         BOOST_REQUIRE(!copy.exit_status());
     }
+    void test_nonblocking()
+    {
+        process blocking;
+        blocking << "sleep" << "10";
+        blocking.start();
+        blocking.signal(SIGKILL);
+        blocking.wait();
+    }
 
     void assert_closed(int fd)
     {
@@ -73,5 +81,6 @@ void test_process(test_suite* ts)
     boost::shared_ptr<TC_Process> instance( new TC_Process );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Process::test_run, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Process::test_redirect, instance ) );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_Process::test_nonblocking, instance ), 0, 1 );
 }
 
