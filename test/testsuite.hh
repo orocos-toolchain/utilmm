@@ -22,4 +22,5 @@ void test_shellexpand( test_suite* );
 void test_process( test_suite* );
 void test_system(test_suite* ts);
 void test_configfile(test_suite* ts);
+void test_misc(test_suite* ts);
 

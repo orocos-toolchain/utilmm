@@ -19,6 +19,10 @@ init_unit_test_suite( int argc, char * argv[] ) {
     test_configfile(ts_config);
     ts->add(ts_config);
 
+    test_suite* ts_misc = BOOST_TEST_SUITE( "Testing misc classes" );
+    test_misc(ts_misc);
+    ts->add(ts_misc);
+
     return ts;
 }
 
