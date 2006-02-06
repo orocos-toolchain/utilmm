@@ -53,6 +53,12 @@ bool config_set::exists(const string& name) const
 
 void config_set::insert(string const& name, string const& value)
 { m_values.insert( make_pair(name, value) ); }
+void config_set::insert(string const& name, list<string> const& value)
+{ 
+    list<string>::const_iterator it, end = value.end();
+    for (it = value.begin(); it != value.end(); ++it)
+        insert(name, *it);
+}
 void config_set::insert(string const& name, config_set const* child)
 { m_children.insert( make_pair(name, child) ); }
 void config_set::set(string const& name, string const& value)
@@ -60,6 +66,12 @@ void config_set::set(string const& name, string const& value)
     m_values.erase(name);
     insert(name, value);
 }
+void config_set::set(string const& name, list<string> const& value)
+{
+    m_values.erase(name);
+    insert(name, value);
+}
+
 
 
 template<> bool config_set::convert(const std::string& value)
