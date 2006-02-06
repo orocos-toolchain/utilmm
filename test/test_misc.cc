@@ -1,5 +1,6 @@
 #include "testsuite.hh"
 #include <utilmm/auto_flag.hh>
+#include <utilmm/stringlist.hh>
 using namespace utilmm;
 
 class TC_Misc
@@ -46,10 +47,38 @@ public:
         }
         BOOST_REQUIRE(field == 3);
     }
+
+    void test_stringlist()
+    {
+        using std::string;
+        
+        {
+            string a = "a b  c";
+            stringlist l = split(a);
+
+            BOOST_REQUIRE_EQUAL(3U, l.size());
+            BOOST_REQUIRE_EQUAL("a", l.front());
+            BOOST_REQUIRE_EQUAL("c", l.back());
+            BOOST_REQUIRE_EQUAL("a b c", join(l));
+        }
+
+        {
+            string id = "a_b_c";
+            stringlist l = split(id, "_");
+            BOOST_REQUIRE_EQUAL(3U, l.size());
+            BOOST_REQUIRE_EQUAL("abc", join(l, ""));
+        }
+
+        { 
+            string id = "a_b c";
+            BOOST_REQUIRE_EQUAL("A_B C", upcase(id));
+        }
+    }
 };
 
 void test_misc(test_suite* ts) {
     boost::shared_ptr<TC_Misc> instance( new TC_Misc );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Misc::test_autoflag, instance ) );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_Misc::test_stringlist, instance ) );
 }
 
