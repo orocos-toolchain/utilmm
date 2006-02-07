@@ -1,5 +1,5 @@
 # -*- Makefile -*-
-# $Id: Makefile.in 1006 2005-10-10 12:56:08Z sjoyeux $
+# $Id: Makefile.in 1360 2006-02-07 08:13:15Z sjoyeux $
 #
 
 top_srcdir=@srcdir@
@@ -23,8 +23,8 @@ endif
 
 install:
 	@echo "Installing pkg-config file"
-	@$(INSTALL) -d $(pkgconfigdir)
-	@$(INSTALL) utilmm.pc $(pkgconfigdir)
+	@$(INSTALL) -d $(DESTDIR)$(pkgconfigdir)
+	@$(INSTALL) utilmm.pc $(DESTDIR)$(pkgconfigdir)
 
 include $(top_srcdir)/mk/recurse.mk
 include $(top_srcdir)/mk/autotools-root.mk
