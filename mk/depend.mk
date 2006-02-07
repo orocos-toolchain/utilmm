@@ -1,5 +1,5 @@
-# $Revision: 1063 $
-# $Id: depend.mk 1063 2005-10-13 08:46:17Z sjoyeux $
+# $Revision: 1391 $
+# $Id: depend.mk 1391 2006-02-07 22:05:18Z sjoyeux $
 
 DEP_FILES += $(patsubst %.c,%.dep,$(DEP_SRC:.cc=.dep))
 
@@ -28,5 +28,6 @@ endif
 
 clean: dep-clean
 dep-clean:
-	-rm -f $(DEP_FILES)
+	@echo "Removing dependencies"
+	@rm -f $(DEP_FILES)
 

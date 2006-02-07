@@ -1,5 +1,5 @@
-dnl $Rev: 1318 $
-dnl $Id: boost.m4 1318 2006-01-31 17:21:48Z sjoyeux $
+dnl $Rev: 1391 $
+dnl $Id: boost.m4 1391 2006-02-07 22:05:18Z sjoyeux $
 
 dnl Checks that boost/version.hpp is present and defines the --with-boost option
 dnl
@@ -175,6 +175,7 @@ AC_DEFUN([CLBS_BOOST_TEST], [
         LDFLAGS=$clbs_sv_LDFLAGS
         AC_LANG_POP
 
+        HAS_BOOST_TEST=$has_working_test
         AS_IF([test "$has_working_test" = "yes"], [
            AC_MSG_RESULT([yes])
            CLBS_BOOST_SUBLIB_DEFINE(test, TEST)

@@ -1,11 +1,11 @@
-# $Revision: 1318 $
-# $Id: app.mk 1318 2006-01-31 17:21:48Z sjoyeux $
+# $Revision: 1391 $
+# $Id: app.mk 1391 2006-02-07 22:05:18Z sjoyeux $
 
 APP_OBJS = $(APP_SRC:%.cc=%.lo)
 
-$(APP_NAME)_LIB_DEPENDS=$(filter %.la,$($(APP_NAME)_LIBS))
+$(APP_NAME)_LIB_DEPENDS=$(filter %.la,$(APP_LIBS))
 ifneq ($($(APP_NAME)_LIB_DEPENDS),)
-$($(APP_NAME)_LIB_DEPENDS): recurse-build
+$($(APP_NAME)_LIB_DEPENDS): | recurse-build
 endif
 recurse-build:
 
