@@ -1,5 +1,5 @@
-# $Revision: 1318 $
-# $Id: compile.mk 1318 2006-01-31 17:21:48Z sjoyeux $
+# $Revision: 1259 $
+# $Id: compile.mk 1259 2006-01-18 12:32:19Z sjoyeux $
 
 %.lo: DESCRIPTION="Compiling $(notdir $@) (libtool)"
 	

@@ -1,5 +1,5 @@
-# $Revision: 1318 $
-# $Id: pch.mk 1318 2006-01-31 17:21:48Z sjoyeux $
+# $Revision: 1255 $
+# $Id: pch.mk 1255 2006-01-18 10:58:25Z sjoyeux $
 
 ifeq ($(USE_PCH),1)
   PCH_DIR=     $(abs_top_builddir)/$(PCH_HEADER).gch

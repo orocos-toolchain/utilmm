@@ -1,5 +1,5 @@
-# $Revision: 1391 $
-# $Id: depend.mk 1391 2006-02-07 22:05:18Z sjoyeux $
+# $Revision: 1365 $
+# $Id: depend.mk 1365 2006-02-07 08:22:03Z sjoyeux $
 
 DEP_FILES += $(patsubst %.c,%.dep,$(DEP_SRC:.cc=.dep))
 

@@ -1,5 +1,5 @@
-# $Revision: 1391 $
-# $Id: app.mk 1391 2006-02-07 22:05:18Z sjoyeux $
+# $Revision: 1381 $
+# $Id: app.mk 1381 2006-02-07 13:46:29Z sjoyeux $
 
 APP_OBJS = $(APP_SRC:%.cc=%.lo)
 

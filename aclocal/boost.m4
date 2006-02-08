@@ -1,5 +1,5 @@
-dnl $Rev: 1391 $
-dnl $Id: boost.m4 1391 2006-02-07 22:05:18Z sjoyeux $
+dnl $Rev: 1375 $
+dnl $Id: boost.m4 1375 2006-02-07 13:34:51Z sjoyeux $
 
 dnl Checks that boost/version.hpp is present and defines the --with-boost option
 dnl

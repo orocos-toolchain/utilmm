@@ -1,8 +1,8 @@
-dnl $Rev: 1063 $
-dnl $Id: doxygen.m4 1063 2005-10-13 08:46:17Z sjoyeux $
+dnl $Rev: 1039 $
+dnl $Id: doxygen.m4 1039 2005-10-12 09:17:32Z sjoyeux $
 
 dnl -*- autoconf -*-
-dnl $Id: doxygen.m4 1063 2005-10-13 08:46:17Z sjoyeux $
+dnl $Id: doxygen.m4 1039 2005-10-12 09:17:32Z sjoyeux $
 
 AC_DEFUN([CLBS_INIT_DOXYGEN], 
   [
