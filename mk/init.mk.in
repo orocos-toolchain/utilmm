@@ -1,5 +1,5 @@
-# $Revision: 1318 $
-# $Id: init.mk.in 1318 2006-01-31 17:21:48Z sjoyeux $
+# $Revision: 1395 $
+# $Id: init.mk.in 1395 2006-02-08 08:07:59Z sjoyeux $
 
 prefix       = @prefix@
 exec_prefix  = @exec_prefix@
@@ -86,6 +86,10 @@ CLBS_TEST_LDFLAGS=@CLBS_TEST_LDFLAGS@
 ### Set up default targets
 all: build
 distclean: clean
+distclean: distclean-common
+
+distclean-common:
+	rm -f Makefile
 
 ### Ensure that default target is build
 $(top_builddir)/libtool: @LIBTOOL_DEPS@

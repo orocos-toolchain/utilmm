@@ -1,5 +1,5 @@
-dnl $Rev: 1391 $
-dnl $Id: clbs.m4 1391 2006-02-07 22:05:18Z sjoyeux $
+dnl $Rev: 1395 $
+dnl $Id: clbs.m4 1395 2006-02-08 08:07:59Z sjoyeux $
 
 AC_DEFUN([FPY_DIRNAME_EXPR],
          [[expr ".$1" : '\(\.\)[^/]*$' \| "x$1" : 'x\(.*\)/[^/]*$']])
@@ -28,15 +28,14 @@ AC_DEFUN([CLBS_GET_USRLIBDIR], [
 AC_DEFUN([CLBS_TEST_SUPPORT], [
      AC_REQUIRE([CLBS_BOOST_TEST])
      HAS_TEST_SUPPORT=$HAS_BOOST_TEST
-     if test "x$HAS_TEST_SUPPORT" = "xyes"; then
-         AC_MSG_NOTICE([Enabling test support])
+     AS_IF([test "x$HAS_TEST_SUPPORT" = "xyes"],
+        [AC_MSG_NOTICE([Enabling test support])
          CLBS_TEST_CPPFLAGS=$BOOST_TEST_CPPFLAGS
          CLBS_TEST_LDFLAGS=$BOOST_TEST_LDFLAGS
          AC_SUBST(CLBS_TEST_CPPFLAGS)
          AC_SUBST(CLBS_TEST_LDFLAGS)
-     else
-         AC_MSG_ERROR([Cannot enable test support])
-     fi
+         $1],
+         [$2])
 ])
 
 AC_DEFUN([CLBS_PCH_SUPPORT], [
