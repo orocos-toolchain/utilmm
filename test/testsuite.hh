@@ -1,3 +1,6 @@
+#ifndef TEST_SUITE_HH
+#define TEST_SUITE_HH
+
 #include <boost/version.hpp>
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test.hpp>
@@ -5,11 +8,13 @@
 
 using namespace boost::unit_test;
 
-#if BOOST_VERSION < 103300
+#ifndef BOOST_REQUIRE_THROW
+#  define BOOST_REQUIRE_THROW(s,c) BOOST_CHECK_THROW(s,c)
+#  define BOOST_REQUIRE_NO_THROW(s) BOOST_CHECK_NO_THROW(s)
+#  define BOOST_REQUIRE_EQUAL(s,c) BOOST_CHECK_EQUAL(s,c)
+#endif
 
-#  ifndef BOOST_REQUIRE_THROW
-#    define BOOST_REQUIRE_THROW(s,c) BOOST_CHECK_THROW(s,c)
-#  endif
+#if BOOST_VERSION < 103300
 inline void set_log_threshold_level(log_level lev)
 { unit_test_log::instance().set_log_threshold_level(lev); }
 #else
@@ -23,4 +28,5 @@ void test_process( test_suite* );
 void test_system(test_suite* ts);
 void test_configfile(test_suite* ts);
 void test_misc(test_suite* ts);
+#endif
 
