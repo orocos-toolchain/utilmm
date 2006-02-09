@@ -1,5 +1,5 @@
-# $Revision: 1395 $
-# $Id: autotools-root.mk 1395 2006-02-08 08:07:59Z sjoyeux $
+# $Revision: 1393 $
+# $Id: autotools-root.mk 1393 2006-02-08 08:05:49Z sjoyeux $
 
 distclean: autotools-root-distclean
 autotools-root-distclean:
