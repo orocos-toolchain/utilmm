@@ -58,62 +58,53 @@ namespace
     using boost::mutex;
     
     boost::mutex mtx_processes;
-    typedef std::list<process *> ProcessList;
+    typedef std::list<process*> ProcessList;
     typedef ProcessList::iterator       ProcessHandle;
-    std::list<process*> processes;
+    std::list<process*> managed_processes;
     
-    ProcessHandle register_process(process* process)
-    { mutex::scoped_lock locker(mtx_processes);
-        processes.push_front( process );
-        return processes.begin();
+    void register_process(process* process)
+    { 
+        sigset_t set, old_set;
+        sigemptyset(&set);
+        sigaddset(&set, SIGINT);
+        
+        sigprocmask(SIG_BLOCK, &set, &old_set);
+        managed_processes.push_back(process);
+        sigprocmask(SIG_SETMASK, &old_set, 0);
     }
     
-    void deregister_process(ProcessHandle it)
-    { mutex::scoped_lock locker(mtx_processes);
-        processes.erase(it);
+    void deregister_process(process* process)
+    {
+        sigset_t set, old_set;
+        sigemptyset(&set);
+        sigaddset(&set, SIGINT);
+        
+        sigprocmask(SIG_BLOCK, &set, &old_set);
+        managed_processes.remove(process);
+        sigprocmask(SIG_SETMASK, &old_set, 0);
     }
 
     RETSIGTYPE (*old_sigint_handler)(int) = 0;
     RETSIGTYPE sigint_handler(int signum)
     {
-        for (ProcessList::iterator it = processes.begin(); it != processes.end(); ++it)
-            (*it)->signal();
-
         if (old_sigint_handler)
             old_sigint_handler(signum);
-
-        exit(-1);
+        else
+            abort();
     }
 
-    void setup_sigint_handler()
-    {
-        static bool setup = false;
-        if (setup)
-            return;
-
-        struct sigaction action;
-        memset(&action, 0, sizeof(struct sigaction));
-        action.sa_handler = sigint_handler;
-
-        struct sigaction old_action;
-        sigaction(SIGINT, &action, &old_action);
-        old_sigint_handler = old_action.sa_handler;
-        
-        setup = true;
-    }
 }
 
 using namespace utilmm;
 
 process::process()
-    : m_handle(register_process(this))
-    , m_running(false), m_pid(0), m_normalexit(true), m_status(0)
+    : m_running(false), m_pid(0), m_normalexit(true), m_status(0)
 {
-    setup_sigint_handler();
+    register_process(this);
 }
 process::~process()
 { 
-    deregister_process(m_handle);
+    deregister_process(this);
     signal(); 
     wait(true);
 }
@@ -133,7 +124,31 @@ void         process::clear() { m_cmdline.clear(); }
 
 
 
+void process::install_sigint_handler()
+{
+    static bool setup = false;
+    if (setup)
+        return;
 
+    struct sigaction action;
+    memset(&action, 0, sizeof(struct sigaction));
+    action.sa_handler = sigint_handler;
+
+    struct sigaction old_action;
+    sigaction(SIGINT, &action, &old_action);
+    if (old_action.sa_flags & SA_SIGINFO)
+        std::cerr << "WARNING: overriding previous SIGINT signal handler" << std::endl;
+    else if (old_action.sa_handler != SIG_IGN && old_action.sa_handler != SIG_DFL)
+        old_sigint_handler = old_action.sa_handler;
+
+    setup = true;
+}
+
+void process::killall()
+{
+    for (ProcessList::iterator it = managed_processes.begin(); it != managed_processes.end(); ++it)
+        kill((*it)->pid(), SIGINT);
+}
 void process::erase_redirection(Stream stream) { redirect_to(stream, ""); }
 void process::redirect_to( Stream stream, boost::filesystem::path const& file)
 {
