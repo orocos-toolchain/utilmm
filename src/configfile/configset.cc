@@ -71,6 +71,8 @@ void config_set::set(string const& name, list<string> const& value)
     m_values.erase(name);
     insert(name, value);
 }
+void config_set::erase(string const& name)
+{ m_values.erase(name); }
 
 
 
