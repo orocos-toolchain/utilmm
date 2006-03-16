@@ -89,7 +89,14 @@ namespace utilmm
          * was not running, false otherwise. }
          * \exception unix_error    an error occured
          */
-        void signal(int signo = SIGTERM);
+        void signal(int signo = SIGINT);
+
+        /** Install a SIGINT handler which calls process::killall */
+        static void install_sigint_handler();
+
+        /** Kill all processes managed by a process instance 
+         * It is safe to call this inside a signal handler */
+        static void killall();
         
         /** Wait for the process to terminate 
          * Use running() to check if the process is running or not */
