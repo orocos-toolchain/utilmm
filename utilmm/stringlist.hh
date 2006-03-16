@@ -18,7 +18,8 @@ namespace utilmm {
             string::size_type to = s.find(sep, from);
             if (to == string::npos)
             {
-                l.push_back(string(s, from));
+                if (from < s.length() || !ignore_empty)
+                    l.push_back(string(s, from));
                 return l;
             }
 
