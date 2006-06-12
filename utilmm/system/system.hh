@@ -93,7 +93,7 @@ namespace utilmm
          * Do not use this function to create a temporary file
          * Use a tempfile object instead
          */
-        static FILE* tempfile::mkstemp(std::string const& base, boost::filesystem::path& path);
+        static FILE* mkstemp(std::string const& base, boost::filesystem::path& path);
 
         /** Get the file path
          * The file path is only available if the <tt>tempfile(std::string)</tt>
