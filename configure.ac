@@ -13,13 +13,6 @@ AC_LANG(C++)
 dnl check for programs
 AC_CANONICAL_HOST
 
-HAVE_DOX="yes" 
-
-CLBS_INIT_DOXYGEN( , , [
-  AC_MSG_WARN("Cannot find doxygen")
-  HAVE_DOX="no"
-])
-
 dnl Check for libtool
 AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
@@ -31,6 +24,7 @@ CLBS_PCH_SUPPORT
 CLBS_DEBUG_OPTIONS
 
 dnl Check boost
+CLBS_CHECK_DOXYGEN
 CLBS_CHECK_BOOST(, [AC_MSG_ERROR([Unable to find Boost libraries])])
 CLBS_BOOST_THREAD([], [AC_MSG_ERROR([Unable to find the Boost/Thread library])])
 CLBS_BOOST_REGEX([], [AC_MSG_ERROR([Unable to find the Boost/Regex library])])
@@ -50,6 +44,8 @@ AC_CONFIG_FILES(
     utilmm.pc
     Init.make
     Makefile
+    Doxyfile
+
     utilmm/Makefile
     src/Makefile
     src/singleton/Makefile
@@ -60,10 +56,5 @@ AC_CONFIG_FILES(
 
     test/Makefile
 )
-if test "x$HAVE_DOX" = "xyes"; then
-   AC_CONFIG_FILES([Doxyfile])
-fi
-
-AC_SUBST([HAVE_DOX])
 AC_OUTPUT
 

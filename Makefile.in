@@ -28,4 +28,5 @@ install:
 
 include $(top_srcdir)/mk/recurse.mk
 include $(top_srcdir)/mk/autotools-root.mk
+include $(top_srcdir)/mk/doxygen.mk
 
