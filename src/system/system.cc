@@ -105,7 +105,12 @@ tempfile::~tempfile()
     }
 }
 
-FILE* tempfile::handle() const { return m_guard.handle<FILE*>(); }
+FILE* tempfile::handle() const { 
+    if (m_path.empty())
+	return 0;
+    else
+	return m_guard.handle<FILE*>(); 
+}
 FILE* tempfile::detach()
 {
     FILE* h = handle();

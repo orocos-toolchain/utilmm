@@ -47,6 +47,7 @@ public:
             BOOST_REQUIRE(boost::filesystem::exists(tmppath));
             file.detach();
             BOOST_REQUIRE(boost::filesystem::exists(tmppath));
+	    BOOST_REQUIRE_EQUAL(file.handle(), (FILE*) 0);
         }
         BOOST_REQUIRE(boost::filesystem::exists(tmppath));
         boost::filesystem::remove(tmppath);
