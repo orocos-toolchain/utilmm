@@ -1,5 +1,9 @@
 #include "testsuite.hh"
 #include <utilmm/system/process.hh>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
 
 using namespace boost::filesystem;
 using namespace utilmm;

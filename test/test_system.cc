@@ -2,6 +2,7 @@
 #include <utilmm/system/system.hh>
 #include <boost/filesystem/operations.hpp>
 #include <iostream>
+#include <errno.h>
 using namespace utilmm;
 
 class TC_System

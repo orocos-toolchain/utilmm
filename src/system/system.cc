@@ -1,8 +1,40 @@
 #include <utilmm/system/system.hh>
+
+#include <exception> // for std::exception
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>  
+#include <string.h>  // for strerror
+#include <unistd.h>  // for close
+#include <boost/noncopyable.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <vector>
 
 using namespace utilmm;
+
+void unix_error::init_description(std::string const& desc)
+{
+    size_t desc_len = desc.length();
+    strncpy(m_desc, desc.c_str(), 500);
+    m_desc[500] = 0;
+    strcat(m_desc, ": ");
+    // I wanted to use strerror_r, but no way to force the use
+    // of the POSIX compliant version
+    strncat(m_desc, strerror(m_error), 500 - desc_len);
+}
+unix_error::unix_error(std::string const& desc, int error_ = errno)
+    : m_error(error_) { init_description(desc); }
+unix_error::unix_error(std::string const& desc)
+    : m_error(errno) { init_description(desc); }
+unix_error::unix_error(int error_)
+    : m_error(error_) { init_description(""); }
+unix_error::unix_error()
+    : m_error(errno) { init_description(""); }
+unix_error::~unix_error() throw () {}
+
+int unix_error::error() const { return m_error; }
+char const* unix_error::what() const throw()
+{ return m_desc; }
 
 auto_close::auto_close()
     : m_fileno(-1), m_stream(0) {}

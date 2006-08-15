@@ -1,14 +1,6 @@
 #ifndef UTILMM_SYSTEM_HH
 #define UTILMM_SYSTEM_HH
 
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>  
-#include <exception> // for std::exception
-#include <string.h>  // for strerror
-#include <unistd.h>  // for close
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem/path.hpp>
 
@@ -16,14 +8,18 @@ namespace utilmm
 {
     class unix_error : public std::exception
     {
+	char m_desc[512];
+	void init_description(std::string const& desc);
+
     public:
-        explicit unix_error(int error_ = errno)
-            : m_error(error_) {}
-        ~unix_error() throw () {}
+        explicit unix_error(std::string const& desc, int error);
+        explicit unix_error(std::string const& desc);
+        explicit unix_error(int error);
+        explicit unix_error();
+        ~unix_error() throw ();
         
-        int error() const { return m_error; }
-        char const* what() const throw()
-        { return strerror(m_error); }
+        int error() const;
+        char const* what() const throw();
 
     private:
         int m_error;
