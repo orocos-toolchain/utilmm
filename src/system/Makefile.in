@@ -15,7 +15,7 @@ MODULE = system
 system_CPPFLAGS = $(BOOST_THREAD_CPPFLAGS) $(BOOST_FILESYSTEM_CPPFLAGS)
 system_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS)
 
-system_SRC = process.cc system.cc
+system_SRC = process.cc system.cc socket.cc
 ############ system: end
 
 include $(top_srcdir)/mk/lib.mk

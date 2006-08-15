@@ -1,5 +1,6 @@
 #include "testsuite.hh"
 #include <utilmm/system/system.hh>
+#include <utilmm/system/socket.hh>
 #include <boost/filesystem/operations.hpp>
 #include <iostream>
 #include <errno.h>
@@ -53,11 +54,41 @@ public:
         BOOST_REQUIRE(boost::filesystem::exists(tmppath));
         boost::filesystem::remove(tmppath);
     }
+
+    void test_socket()
+    {
+	// First create a IP server socket
+	server_socket server(server_socket::Inet, server_socket::Stream, "0.0.0.0:4672");
+	// This should throw since the port is already used
+	BOOST_REQUIRE_THROW(server_socket another_server(server_socket::Inet, server_socket::Stream, "0.0.0.0:4672"), unix_error);
+
+	// Create a socket and connect it to the server
+	socket client(socket::Inet, socket::Stream, "127.0.0.1:4672");
+	// This should throw since there is nothing on the port
+	BOOST_REQUIRE_THROW(socket another_client(socket::Inet, socket::Stream, "127.0.0.1:6472"), unix_error);
+
+	// Should have an incoming connection
+	std::auto_ptr<socket> accepted(server.wait());
+	BOOST_REQUIRE(accepted.get() != NULL);
+
+	// Should not have an incoming connection
+	BOOST_REQUIRE(!server.try_wait());
+	BOOST_REQUIRE(server.wait(false) == NULL);
+
+	// write on the connection and check that 
+	// we get data on the other end
+	accepted->write("blabla", 6);
+	char buffer[7];
+	buffer[6] = 0;
+	client.read(buffer, 6);
+	BOOST_REQUIRE_EQUAL(buffer, "blabla");
+    }
 };
 
 void test_system(test_suite* ts) {
     boost::shared_ptr<TC_System> instance( new TC_System );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_System::test_filetools, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_System::test_tempfile, instance ) );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_System::test_socket, instance ) );
 }
 
