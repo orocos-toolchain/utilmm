@@ -98,7 +98,7 @@ namespace
 using namespace utilmm;
 
 process::process()
-    : m_running(false), m_pid(0), m_normalexit(true), m_status(0)
+    : m_running(false), m_pid(0), m_normalexit(true), m_status(0), m_do_setpgid(false)
 {
     register_process(this);
 }
@@ -190,6 +190,12 @@ process::output_file& process::get_stream(Stream stream)
     return m_stdout;
 }
 
+void process::set_pgid(pid_t pgid)
+{
+    m_do_setpgid = true;
+    m_pgid = pgid;
+}
+
 static const int CHDIR_ERROR = 0;
 static const int EXEC_ERROR  = 1;
 void process::start()
@@ -231,6 +237,9 @@ void process::start()
         m_stdout.redirect(stdout);
         m_stderr.redirect(stderr);
         read_guard.close();
+
+	if (m_do_setpgid)
+	    setpgid(0, m_pgid);
 
         // must use execvp bec. we want exec to search for prog for us
         // so, should set environment variables ourselves

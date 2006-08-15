@@ -48,6 +48,9 @@ namespace utilmm
         bool  m_normalexit;
         int   m_status;
 
+	bool m_do_setpgid;
+	pid_t m_pgid;
+
         bool wait(bool hang);
         void send_child_error(int fd, int error_type);
         void process_child_error(int fd);
@@ -160,6 +163,9 @@ namespace utilmm
         std::string environment(const std::string& key) const;
         /** Remove any overriden environment variable */
         void clear_environment();
+
+	/** Set the process group ID at startup. See setpgid(3) */
+	void set_pgid(pid_t pid);
 
         /** Check if the last running process exited normally */
         bool exit_normal() const;
