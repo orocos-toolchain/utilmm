@@ -237,7 +237,7 @@ void process::start()
         for (Env::const_iterator it = env.begin(); it != env.end(); ++it)
         {
             std::string putenv_arg = (it->first + "=" + it->second);
-            putenv( const_cast<char*>(putenv_arg.c_str()) );
+            putenv( strdup(putenv_arg.c_str()) );
         }
 
         if (!m_wdir.empty())

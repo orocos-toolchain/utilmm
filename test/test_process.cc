@@ -28,22 +28,31 @@ public:
 	return output;
     }
 
-    void test_environment()
+    void check_var(process& proc, std::string const& varname, std::string const& expected)
     {
 	tempfile tmpfile("bla");
-	process get_var;
-	get_var << "printenv" << "TESTVAR";
-	get_var.set_environment("TESTVAR", "my_value");
-	get_var.redirect_to(process::Stdout, fileno(tmpfile.handle()), false);
-	get_var.start();
-	get_var.wait();
-        BOOST_REQUIRE(get_var.exit_normal());
-        BOOST_REQUIRE(!get_var.exit_status());
+	proc.clear();
+	proc.redirect_to(process::Stdout, fileno(tmpfile.handle()), false);
+	proc << "printenv" << varname;
+
+	proc.start();
+	proc.wait();
+        BOOST_REQUIRE(proc.exit_normal());
+        BOOST_REQUIRE(!proc.exit_status());
 
 	int read_fd = open(tmpfile.path().native_file_string().c_str(), O_RDONLY);
 	string var_value = get_file_contents(read_fd);
 	close(read_fd);
-	BOOST_REQUIRE_EQUAL(var_value, "my_value\n");
+	BOOST_REQUIRE_EQUAL(var_value, expected + "\n");
+    }
+
+    void test_environment()
+    {
+	process get_var;
+	get_var.set_environment("TESTVAR", "my_value");
+	get_var.set_environment("TESTVAR2", "another_value");
+	check_var(get_var, "TESTVAR2", "another_value");
+	check_var(get_var, "TESTVAR", "my_value");
     }
 
     void test_run()
