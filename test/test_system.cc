@@ -84,7 +84,7 @@ public:
 	//BOOST_REQUIRE(client.try_wait(socket::WaitRead));
 	client.read(buffer, 7);
 	BOOST_REQUIRE(!client.try_wait(socket::WaitRead));
-	BOOST_REQUIRE_EQUAL(buffer, "blabla");
+	BOOST_REQUIRE_EQUAL(std::string(buffer), std::string("blabla"));
     }
 };
 
