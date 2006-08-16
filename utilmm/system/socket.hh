@@ -9,6 +9,7 @@ namespace utilmm
     public:
 	enum Domain { Unix, Inet };
 	enum Type { Stream, Datagram };
+	enum Wait { WaitRead = 1, WaitWrite = 2, WaitException = 4};
 
     private:
 	static int to_unix(Domain d);
@@ -19,6 +20,8 @@ namespace utilmm
 	int	m_fd;
 	Domain	m_domain;
 	Type	m_type;
+
+	int wait(int what, timeval* tv) const;
 
     protected:
 	std::vector<uint8_t> to_sockaddr(std::string const& to) const;
@@ -33,6 +36,8 @@ namespace utilmm
 	~base_socket();
 
 	int fd() const;
+	bool try_wait(int what) const;
+	void wait(int what) const;
     };
 
     class socket : public base_socket
@@ -55,17 +60,18 @@ namespace utilmm
 
 	void bind(std::string const& to);
 	/** Waits for an incoming connection 
-	 * If block is true, wait for a connection.
-	 * If it is false, do not block and return
-	 * NULL if there is no connection available
+	 * If block is true, wait for a connection. If it is false, do not block 
+	 * and return NULL if there is no connection available
 	 */ 
-	socket* wait(bool block = true) const;
+	socket* accept() const;
 
-	/** Checks if there is an incoming connection in 
-	 * the connection queue. Returns true if it is
-	 * the case (i.e. wait() will return a socket)
+	/** Checks if there is an incoming connection in the connection queue. 
+	 * @return true if it is the case (i.e. accept() will return a socket)
 	 * and false otherwise */
 	bool try_wait() const;
+
+	/** Waits for an incoming connection */
+	void wait() const;
     };
 }
 

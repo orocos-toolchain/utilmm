@@ -106,6 +106,40 @@ namespace utilmm
     }
 
     int base_socket::fd() const { return m_fd; }
+    bool base_socket::try_wait(int what) const
+    {
+	timeval tv = { 0, 0 };
+	return wait(what, &tv) > 0;
+    }
+    void base_socket::wait(int what) const { wait(what, 0); }
+    int base_socket::wait(int what, timeval* tv) const
+    {
+	fd_set rd_set, wr_set, exc_set;
+	fd_set *rd_p = 0, *wr_p = 0, *exc_p = 0;
+	if (what & WaitRead)
+	{
+	    FD_ZERO(&rd_set);
+	    FD_SET(fd(), &rd_set);
+	    rd_p = &rd_set;
+	}
+	if (what & WaitWrite)
+	{
+	    FD_ZERO(&wr_set);
+	    FD_SET(fd(), &wr_set);
+	    wr_p = &wr_set;
+	}
+	if (what & WaitException)
+	{
+	    FD_ZERO(&exc_set);
+	    FD_SET(fd(), &exc_set);
+	    exc_p = &exc_set;
+	}
+
+	int ret = select(m_fd + 1, rd_p, wr_p, exc_p, tv);
+	if (ret == -1)
+	    throw unix_error("error while waiting for socket");
+	return ret;
+    }
 
 
     socket::socket(Domain domain, Type type, string const& connect_to)
@@ -154,11 +188,13 @@ namespace utilmm
 	    throw unix_error("cannot bind to " + to);
     }
 
-    socket* server_socket::wait(bool block) const
-    {
-	if (!block && !try_wait())
-	    return 0;
+    void server_socket::wait() const
+    { return base_socket::wait(base_socket::WaitRead); }
+    bool server_socket::try_wait() const
+    { return base_socket::try_wait(base_socket::WaitRead); }
 
+    socket* server_socket::accept() const
+    {
 	sockaddr    addr;
 	socklen_t   len;
 	int sock_fd = ::accept(fd(), &addr, &len);
@@ -166,19 +202,6 @@ namespace utilmm
 	    throw unix_error("failed in accept()");
 
 	return new socket(sock_fd);
-    }
-
-    bool server_socket::try_wait() const
-    {
-	fd_set set;
-	FD_ZERO(&set);
-	FD_SET(fd(), &set);
-
-	timeval tv = { 0, 0 };
-	int ret = select(fd() + 1, &set, 0, 0, &tv);
-	if (ret == -1)
-	    throw unix_error("error while calling select()");
-	return (ret > 0);
     }
 }
 

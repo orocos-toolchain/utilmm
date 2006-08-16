@@ -67,20 +67,23 @@ public:
 	// This should throw since there is nothing on the port
 	BOOST_REQUIRE_THROW(socket another_client(socket::Inet, socket::Stream, "127.0.0.1:6472"), unix_error);
 
-	// Should have an incoming connection
-	std::auto_ptr<socket> accepted(server.wait());
-	BOOST_REQUIRE(accepted.get() != NULL);
+	server.wait();
+	BOOST_REQUIRE(server.try_wait());
+	std::auto_ptr<socket> accepted(server.accept());
 
 	// Should not have an incoming connection
 	BOOST_REQUIRE(!server.try_wait());
-	BOOST_REQUIRE(server.wait(false) == NULL);
 
 	// write on the connection and check that 
 	// we get data on the other end
-	accepted->write("blabla", 6);
+	accepted->write("blabla", 7);
 	char buffer[7];
-	buffer[6] = 0;
-	client.read(buffer, 6);
+
+	//accepted->wait(socket::WaitWrite);
+	client.wait(socket::WaitRead);
+	//BOOST_REQUIRE(client.try_wait(socket::WaitRead));
+	client.read(buffer, 7);
+	BOOST_REQUIRE(!client.try_wait(socket::WaitRead));
 	BOOST_REQUIRE_EQUAL(buffer, "blabla");
     }
 };
