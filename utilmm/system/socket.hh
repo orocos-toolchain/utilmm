@@ -1,3 +1,6 @@
+#ifndef UTILMM_SOCKET_HH
+#define UTILMM_SOCKET_HH
+
 #include <boost/noncopyable.hpp>
 #include <string>
 #include <vector>
@@ -74,4 +77,6 @@ namespace utilmm
 	void wait() const;
     };
 }
+
+#endif
 
