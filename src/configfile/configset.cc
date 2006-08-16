@@ -12,6 +12,8 @@ config_set::~config_set()
     clear(); 
 }
     
+bool config_set::empty() const
+{ return m_values.empty() && m_children.empty(); }
 void config_set::clear() 
 {
     m_values.clear();
@@ -43,6 +45,14 @@ list<const config_set*> config_set::children(const string& name) const
     }
     return ret;
 }
+config_set const& config_set::child(string const& name) const
+{
+    static config_set empty_set;
+    subsets every_child = children(name);
+    if (every_child.empty())
+	return empty_set;
+    return *every_child.front();
+}
 
 bool config_set::exists(const string& name) const
 {
@@ -59,8 +69,8 @@ void config_set::insert(string const& name, list<string> const& value)
     for (it = value.begin(); it != value.end(); ++it)
         insert(name, *it);
 }
-void config_set::insert(string const& name, config_set const* child)
-{ m_children.insert( make_pair(name, child) ); }
+void config_set::insert(string const& name, config_set const* child_)
+{ m_children.insert( make_pair(name, child_) ); }
 void config_set::set(string const& name, string const& value)
 {
     m_values.erase(name);

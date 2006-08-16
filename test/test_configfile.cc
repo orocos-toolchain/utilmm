@@ -22,6 +22,13 @@ public:
     ~TC_Configfile() 
     { delete m_config; }
 
+    void test_basic_properties()
+    {
+	BOOST_REQUIRE(! m_config->empty());
+	config_set empty_set;
+	BOOST_REQUIRE( empty_set.empty() );
+    }
+
     template<typename T>
     void test_get_scalar(string const& name, T expected)
     { 
@@ -58,6 +65,12 @@ public:
         
         config_set const* child = children.front();
         BOOST_REQUIRE_EQUAL(child->get<string>("str"), "another string");
+
+	config_set const& only_child = m_config->child("child");
+	BOOST_REQUIRE_EQUAL(child, &only_child);
+
+	config_set const& not_a_child = m_config->child("not_a_child");
+	BOOST_REQUIRE(not_a_child.empty());
     }
 
     void test_commandline()
@@ -116,6 +129,7 @@ private:
 
 void test_configfile(test_suite* ts) {
     boost::shared_ptr<TC_Configfile> instance( new TC_Configfile );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_Configfile::test_basic_properties, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Configfile::test_scalar, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Configfile::test_list, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Configfile::test_child, instance ) );
