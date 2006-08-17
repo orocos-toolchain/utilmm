@@ -1,7 +1,7 @@
 dnl  -*- Autoconf -*-
 dnl  $Id: configure.ac 1318 2006-01-31 17:21:48Z sjoyeux $
 
-AC_INIT(utilmm, 0.1.0, fpy@laas.fr)
+AC_INIT(utilmm, 0.2, sjoyeux@laas.fr)
 AC_CONFIG_HEADER([utilmm/config/config.h])
 
 AC_PREREQ(2.54)
