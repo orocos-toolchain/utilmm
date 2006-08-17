@@ -134,18 +134,17 @@ namespace utilmm
          *  prs.redirect_to(process::Stdout, "my_output_file");
          * \endcode
          * 
-         * \param stream the output stream
-         * \param name   { a name for the destination. If handle is InvalidHandle, 
-         *               then \c name shall be a valid file name, since the file 
-         *               will be created in start() }
+         * \param stream the output stream, either StdOut or StdErr
          * \param handle the file handle to redirect to, or InvalidHandle
-         * \param auto_close { if the file descriptor is owned by this process
+         * \param auto_close { if the file descriptor is owned by this object
          *               if auto_close is true, there is no more guarantee as to 
          *               the status of the file descriptor. It can be closed
-         *               anytime by process }
+         *               anytime by the process object }
          */
         void redirect_to( Stream stream, int   handle, bool auto_close = true);
+	/** \overload */
         void redirect_to( Stream stream, FILE* handle, bool auto_close = true);
+	/** \overload */
         void redirect_to( Stream stream, boost::filesystem::path const& file);
 
 

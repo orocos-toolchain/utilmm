@@ -27,7 +27,7 @@ void config_set::clear()
     
 const config_set* config_set::parent() const { return m_parent; } 
 config_set* config_set::parent() { return m_parent; } 
-list<const config_set*> config_set::children(const string& name) const
+list<const config_set*> config_set::children(const std::string& name) const
 {
     typedef list<const config_set *> SetList;
     pair<ChildMap::const_iterator, ChildMap::const_iterator>
@@ -45,7 +45,7 @@ list<const config_set*> config_set::children(const string& name) const
     }
     return ret;
 }
-config_set const& config_set::child(string const& name) const
+config_set const& config_set::child(std::string const& name) const
 {
     static config_set empty_set;
     subsets every_child = children(name);
@@ -54,34 +54,34 @@ config_set const& config_set::child(string const& name) const
     return *every_child.front();
 }
 
-bool config_set::exists(const string& name) const
+bool config_set::exists(const std::string& name) const
 {
     return 
         m_values.find(name) != m_values.end()
         || m_children.find(name) != m_children.end();
 }
 
-void config_set::insert(string const& name, string const& value)
+void config_set::insert(std::string const& name, std::string const& value)
 { m_values.insert( make_pair(name, value) ); }
-void config_set::insert(string const& name, list<string> const& value)
+void config_set::insert(std::string const& name, std::list<std::string> const& value)
 { 
     list<string>::const_iterator it, end = value.end();
     for (it = value.begin(); it != value.end(); ++it)
         insert(name, *it);
 }
-void config_set::insert(string const& name, config_set const* child_)
+void config_set::insert(std::string const& name, config_set const* child_)
 { m_children.insert( make_pair(name, child_) ); }
-void config_set::set(string const& name, string const& value)
+void config_set::set(std::string const& name, std::string const& value)
 {
     m_values.erase(name);
     insert(name, value);
 }
-void config_set::set(string const& name, list<string> const& value)
+void config_set::set(std::string const& name, std::list<std::string> const& value)
 {
     m_values.erase(name);
     insert(name, value);
 }
-void config_set::erase(string const& name)
+void config_set::erase(std::string const& name)
 { m_values.erase(name); }
 
 
@@ -97,7 +97,7 @@ template<> bool config_set::convert(const std::string& value)
 }
 
 template<>
-config_set::stringlist config_set::get(const string& name, stringlist const& defval, 
+config_set::stringlist config_set::get(const std::string& name, stringlist const& defval, 
         boost::enable_if< details::is_list<config_set::stringlist> >::type* dummy) const
 {
     list<string> values;

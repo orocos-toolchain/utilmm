@@ -102,7 +102,6 @@ namespace utilmm
         FILE* handle() const;
         
         /** Creates a temporary file
-         * \param[out]  path        the file path
          * \return      the file descriptor to the open file
          * \exception   unix_error  an error occured
          */

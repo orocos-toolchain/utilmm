@@ -155,7 +155,7 @@ namespace utilmm
             m_options.push_back(cmdline_option(*opt));
     }
 
-    command_line::command_line(const list<string>& description)
+    command_line::command_line(const std::list<std::string>& description)
     {
         for(list<string>::const_iterator it = description.begin(); it != description.end(); ++it)
             m_options.push_back(cmdline_option(*it));

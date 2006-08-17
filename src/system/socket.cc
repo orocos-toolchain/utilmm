@@ -57,7 +57,7 @@ namespace utilmm
 	    close(m_fd);
     }
 
-    vector<uint8_t> base_socket::to_sockaddr(string const& to) const
+    vector<uint8_t> base_socket::to_sockaddr(std::string const& to) const
     {
 	vector<uint8_t> ret;
 	if (m_domain == Unix)
@@ -142,13 +142,13 @@ namespace utilmm
     }
 
 
-    socket::socket(Domain domain, Type type, string const& connect_to)
+    socket::socket(Domain domain, Type type, std::string const& connect_to)
 	: base_socket(domain, type)
     { connect(connect_to); }
     socket::socket(int _fd)
 	: base_socket(_fd) {}
 
-    void socket::connect(string const& to)
+    void socket::connect(std::string const& to)
     {
 	vector<uint8_t> addr = to_sockaddr(to);
 	if (::connect(fd(), reinterpret_cast<sockaddr*>(&addr[0]), addr.size()) == -1)
@@ -173,7 +173,7 @@ namespace utilmm
 
 
 
-    server_socket::server_socket(Domain domain, Type type, string const& bind_to, int backlog)
+    server_socket::server_socket(Domain domain, Type type, std::string const& bind_to, int backlog)
 	: base_socket(domain, type)
     { 
 	bind(bind_to); 
@@ -181,7 +181,7 @@ namespace utilmm
 	    throw unix_error("cannot listen to " + bind_to);
     }
 
-    void server_socket::bind(string const& to)
+    void server_socket::bind(std::string const& to)
     {
 	vector<uint8_t> addr = to_sockaddr(to);
 	if (::bind(fd(), reinterpret_cast<sockaddr*>(&addr[0]), addr.size()) == -1)

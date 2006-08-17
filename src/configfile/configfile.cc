@@ -14,10 +14,10 @@ using namespace utilmm;
 using boost::regex;
 using boost::smatch;
 
-parse_error::parse_error(int line_, string const& message_)
+parse_error::parse_error(int line_, std::string const& message_)
     : line(line_), message(message_) {}
 
-config_file::config_file(string const& name)
+config_file::config_file(std::string const& name)
 {
     try { read(name); }
     catch(...) {
@@ -26,7 +26,7 @@ config_file::config_file(string const& name)
     }
 }
     
-void config_file::read(const string& name)
+void config_file::read(const std::string& name)
 {
     clear();
 
