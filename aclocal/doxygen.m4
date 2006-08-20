@@ -10,7 +10,7 @@ AC_DEFUN([CLBS_CHECK_DOXYGEN],
 	ifelse([$4], [$4], [])
     ], [
 	AC_PATH_PROG(DOT, dot)
-	if test -n $DOT; then
+	if test -n "$DOT"; then
 	    HAS_DOT=yes
 	    AC_SUBST(HAS_DOT)
 	    DOT_PATH=`dirname $DOT`
