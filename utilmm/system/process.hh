@@ -121,14 +121,14 @@ namespace utilmm
 
         /** Redirects the program output to a file or an already opened file descriptor
          *
-         * \par[Using temporary files]
+         * \par Using temporary files
          * \code
          *  process prs;
          *  tempfile tmp("basename");
          *  prs.redirect_to(process::Stdout, tmp.fd(), true);
          * \endcode
          *
-         * \par[Make process open a file]
+         * \par Make the object open a file
          * \code
          *  process prs;
          *  prs.redirect_to(process::Stdout, "my_output_file");
@@ -136,10 +136,10 @@ namespace utilmm
          * 
          * \param stream the output stream, either StdOut or StdErr
          * \param handle the file handle to redirect to, or InvalidHandle
-         * \param auto_close { if the file descriptor is owned by this object
-         *               if auto_close is true, there is no more guarantee as to 
+         * \param auto_close if the file descriptor is owned by this object.
+         *               If this flag is true, there is no more guarantee as to 
          *               the status of the file descriptor. It can be closed
-         *               anytime by the process object }
+         *               anytime by the process object
          */
         void redirect_to( Stream stream, int   handle, bool auto_close = true);
 	/** \overload */
@@ -157,7 +157,7 @@ namespace utilmm
         void set_environment(const std::string& key, const std::string& value);
         /** Gets an overriden environment variable
          * \param key the variable name
-         * \return the variable value if \c key has previously been overriden by a call to set_environment
+         * \return the variable value if \c key has previously been overriden by a call to process::set_environment
          * */
         std::string environment(const std::string& key) const;
         /** Remove any overriden environment variable */
