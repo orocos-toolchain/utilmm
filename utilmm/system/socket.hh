@@ -28,13 +28,13 @@ namespace utilmm
 
     protected:
 	std::vector<uint8_t> to_sockaddr(std::string const& to) const;
-	base_socket(int fd);
 
     public:
 	/** Creates a socket and connects it to \c connect_to. Connect_to
 	 * is either a UNIX socket name if domain is Unix, or a IP address
 	 * of the form "a.b.c.d:port"
 	 */
+	base_socket(int fd);
 	base_socket(Domain domain, Type type);
 	~base_socket();
 
@@ -46,9 +46,9 @@ namespace utilmm
     class socket : public base_socket
     {
 	friend class server_socket;
-	socket(int fd);
 
     public:
+	socket(int fd);
 	socket(Domain domain, Type type, std::string const& connect_to);
 
 	void connect(std::string const& to);
