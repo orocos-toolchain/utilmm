@@ -191,9 +191,7 @@ namespace utilmm
 
     socket* server_socket::accept() const
     {
-	sockaddr    addr;
-	socklen_t   len;
-	int sock_fd = ::accept(fd(), &addr, &len);
+	int sock_fd = ::accept(fd(), NULL, NULL);
 	if (sock_fd == -1)
 	    throw unix_error("failed in accept()");
 
