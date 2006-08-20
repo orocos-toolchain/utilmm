@@ -63,7 +63,7 @@ public:
 	BOOST_REQUIRE_THROW(server_socket another_server(server_socket::Inet, server_socket::Stream, "0.0.0.0:4672"), unix_error);
 
 	// Create a socket and connect it to the server
-	socket client(socket::Inet, socket::Stream, "127.0.0.1:4672");
+	socket client(socket::Inet, socket::Stream, "localhost:4672");
 	// This should throw since there is nothing on the port
 	BOOST_REQUIRE_THROW(socket another_client(socket::Inet, socket::Stream, "127.0.0.1:6472"), unix_error);
 

@@ -7,11 +7,14 @@
 #include <algorithm>
 
 #include <sys/socket.h> 
+#include <netdb.h>
 #include <sys/un.h> 
 #include <netinet/in.h> 
 #include <netinet/ip.h> 
 #include <sys/time.h>
 #include <sys/select.h>
+
+#include <iostream>
 
 using namespace std;
 using namespace boost;
@@ -79,24 +82,41 @@ namespace utilmm
 	}
 	else if (m_domain == Inet)
 	{
-	    static regex rx_ip("^(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+):(\\d+)$");
+	    static regex rx_ip("^(.+):(\\d+)$");
 	    smatch match;
 	    if (!regex_match(to, match, rx_ip))
 		throw bad_address();
 
-	    sockaddr_in addr;
-	    uint8_t* address = reinterpret_cast<uint8_t*>(&addr.sin_addr.s_addr);
-	    for (int i = 1; i < 5; ++i)
-		address[4 - i] = lexical_cast<int>( string(match[i].first, match[i].second) );
-	    uint16_t port = lexical_cast<uint16_t>( string(match[5].first, match[5].second) );
+	    std::string hostname = string(match[1].first, match[1].second);
+	    uint16_t port = lexical_cast<uint16_t>( string(match[2].first, match[2].second) );
 
-	    addr.sin_family = AF_INET;
-	    addr.sin_port = htons(port);
-	    addr.sin_addr.s_addr = htonl(*reinterpret_cast<int32_t*>(address));
-	    copy(
+	    struct hostent* host = gethostbyname(hostname.c_str());
+	    if (!host)
+		throw unix_error("cannot get host address");
+
+	    if (host->h_addrtype == AF_INET)
+	    {
+		sockaddr_in addr;
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(port);
+		memcpy(&addr.sin_addr, host->h_addr_list[0], host->h_length);
+		copy(
 		    reinterpret_cast<uint8_t*>(&addr), 
 		    reinterpret_cast<uint8_t*>(&addr) + sizeof(addr), 
 		    back_inserter(ret));
+	    }
+	    else
+	    {
+		sockaddr_in6 addr;
+		addr.sin6_family = AF_INET6;
+		addr.sin6_port = htons(port);
+		addr.sin6_flowinfo = 0; // don't know what this is
+		memcpy(&addr.sin6_addr, &host->h_addr_list[0], host->h_length);
+		copy(
+		    reinterpret_cast<uint8_t*>(&addr), 
+		    reinterpret_cast<uint8_t*>(&addr) + sizeof(addr), 
+		    back_inserter(ret));
+	    }
 	}
 	return ret;
     }
