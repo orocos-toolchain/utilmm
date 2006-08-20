@@ -13,7 +13,6 @@
 #include <sys/time.h>
 #include <sys/select.h>
 
-#include <iostream>
 using namespace std;
 using namespace boost;
 
@@ -88,10 +87,7 @@ namespace utilmm
 	    sockaddr_in addr;
 	    uint8_t* address = reinterpret_cast<uint8_t*>(&addr.sin_addr.s_addr);
 	    for (int i = 1; i < 5; ++i)
-	    {
-		std::cerr << string(match[i].first, match[i].second) << std::endl;
 		address[4 - i] = lexical_cast<int>( string(match[i].first, match[i].second) );
-	    }
 	    uint16_t port = lexical_cast<uint16_t>( string(match[5].first, match[5].second) );
 
 	    addr.sin_family = AF_INET;
