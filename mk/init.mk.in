@@ -1,5 +1,5 @@
-# $Revision: 1495 $
-# $Id: init.mk.in 1495 2006-06-27 07:54:04Z sjoyeux $
+# $Revision: 1521 $
+# $Id: init.mk.in 1521 2006-08-21 07:55:10Z sjoyeux $
 
 prefix       = @prefix@
 exec_prefix  = @exec_prefix@
@@ -87,11 +87,11 @@ CLBS_TEST_LDFLAGS=@CLBS_TEST_LDFLAGS@
 
 ### Set up default targets
 all: build
-distclean: clean
 distclean: distclean-common
 doc:
+test:
 
-distclean-common:
+distclean-common: clean
 	rm -f Makefile
 
 ### Ensure that default target is build

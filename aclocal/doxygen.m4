@@ -1,5 +1,5 @@
-dnl $Rev: 1498 $
-dnl $Id: doxygen.m4 1498 2006-06-27 09:29:51Z sjoyeux $
+dnl $Rev: 1519 $
+dnl $Id: doxygen.m4 1519 2006-08-20 18:16:59Z sjoyeux $
 
 AC_DEFUN([CLBS_CHECK_DOXYGEN], 
 [
@@ -20,7 +20,7 @@ AC_DEFUN([CLBS_CHECK_DOXYGEN],
 	fi
 
 	AC_PATH_PROG(PERL, perl)
-	if test -n $PERL; then
+	if test -n "$PERL"; then
 	    HAS_PERL=yes
 	    AC_SUBST(HAS_PERL)
 	else
