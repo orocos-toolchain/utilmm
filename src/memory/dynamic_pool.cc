@@ -7,7 +7,7 @@ using namespace utilmm::pools;
 
 dynamic_pool::dynamic_pool() : m_size(0) {}
 dynamic_pool::~dynamic_pool()
-{ sweep(m_free.begin(), m_free.end()); }
+{ sweep_arrays(m_free.begin(), m_free.end()); }
 
 dynamic_pool::item_t* dynamic_pool::get_base(void* ptr)
 { 
@@ -19,7 +19,7 @@ void* dynamic_pool::allocate(size_t size)
 {
     if (m_size < size)
     {
-        sweep(m_free.begin(), m_free.end());
+        sweep_arrays(m_free.begin(), m_free.end());
         m_free.clear();
         m_size = size;
     }
@@ -47,7 +47,7 @@ void dynamic_pool::deallocate(void* vbuffer)
     item_t* item = get_base(vbuffer);
 
     if (item->size != m_size)
-        delete item;
+        delete[] item;
     else
         m_free.push_back(item);
 }
