@@ -14,13 +14,13 @@ namespace utilmm
     template<int size, typename D>
     void swap_endian_helper(const D data, D& buffer);
 
-    template<> void swap_endian_helper<1, uint8_t>(const uint8_t data, uint8_t& buffer)
+    template<> inline void swap_endian_helper<1, uint8_t>(const uint8_t data, uint8_t& buffer)
     { buffer = data; }
-    template<> void swap_endian_helper<2, uint16_t>(const uint16_t data, uint16_t& buffer)
+    template<> inline void swap_endian_helper<2, uint16_t>(const uint16_t data, uint16_t& buffer)
     { buffer = ((data >> 8) & 0xFF) | ((data << 8) & 0xFF00); }
-    template<> void swap_endian_helper<4, uint32_t>(const uint32_t data, uint32_t& buffer)
+    template<> inline void swap_endian_helper<4, uint32_t>(const uint32_t data, uint32_t& buffer)
     { buffer = ((data & 0xFF000000) >> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0xFF) << 24) | ((data & 0xFF00) << 8); }
-    template<> void swap_endian_helper<8, uint64_t>(const uint64_t data, uint64_t& buffer)
+    template<> inline void swap_endian_helper<8, uint64_t>(const uint64_t data, uint64_t& buffer)
     { 
         const uint32_t 
               src_low (data & 0xFFFFFFFF)
@@ -35,7 +35,7 @@ namespace utilmm
 
     /* Returns in \c buffer the value of \c data with endianness swapped */
     template<typename S>
-    void swap_endian(const S data, S& buffer)
+    inline void swap_endian(const S data, S& buffer)
     { 
 	typedef typename type_from_size<sizeof(S) * 8>::least T;
 	swap_endian_helper<sizeof(S), T> (reinterpret_cast<const T&>(data), reinterpret_cast<T&>(buffer)); 
@@ -43,7 +43,7 @@ namespace utilmm
 
     /* Returns the value of \c data with endianness swapped */
     template<typename S>
-    S swap_endian(const S data)
+    inline S swap_endian(const S data)
     { S ret;
 	swap_endian(data, ret);
 	return ret;
@@ -51,31 +51,31 @@ namespace utilmm
 
 #ifdef WORDS_BIGENDIAN
     template<typename S>
-    void endian_native_to_network(const S source, S& dest)
+    inline void endian_native_to_network(const S source, S& dest)
     { swap_endian<S>(source, dest); }
 
     template<typename S>
-    S endian_native_to_network(const S source)
+    inline S endian_native_to_network(const S source)
     { return swap_endian<S>(source); }
 #else
     /** Converts \c source, which is in native byte order, into network byte order and 
      * saves the result into \dest */
     template<typename S>
-    void endian_native_to_network(const S source, S& dest) { dest = source; }
+    inline void endian_native_to_network(const S source, S& dest) { dest = source; }
     /** Converts \c source, which is in native byte order, into network byte order and 
      * returns the result */
     template<typename S>
-    S endian_native_to_network(const S source) { return source; }
+    inline S endian_native_to_network(const S source) { return source; }
 #endif
 
     /** Converts \c source, which is in network byte order, into native byte order and 
      * saves the result into \dest */
     template<typename S>
-    void endian_network_to_native(const S source, S& dest) { endian_native_to_network(source, dest); }
+    inline void endian_network_to_native(const S source, S& dest) { endian_native_to_network(source, dest); }
     /** Converts \c source, which is in network byte order, into native byte order and
      * returns the result */
     template<typename S>
-    S endian_network_to_native(const S source) { return endian_native_to_network(source); }
+    inline S endian_network_to_native(const S source) { return endian_native_to_network(source); }
 }
 
 #endif
