@@ -1,6 +1,7 @@
 #include "testsuite.hh"
 #include <utilmm/system/system.hh>
 #include <utilmm/system/socket.hh>
+#include <utilmm/system/endian.hh>
 #include <boost/filesystem/operations.hpp>
 #include <iostream>
 #include <errno.h>
@@ -14,6 +15,14 @@ public:
     }
 
     ~TC_System() { }
+
+    void test_swap_endian()
+    {
+        BOOST_REQUIRE_EQUAL(0x10, swap_endian<int8_t>(0x10));
+        BOOST_REQUIRE_EQUAL(0x1032, swap_endian<int16_t>(0x3210));
+        BOOST_REQUIRE_EQUAL(0x10325476, swap_endian<int32_t>(0x76543210));
+        BOOST_REQUIRE_EQUAL(0x1032547698badcfeLL,swap_endian<int64_t>(0xfedcba9876543210LL));
+    }
 
     void test_filetools()
     {
@@ -93,5 +102,6 @@ void test_system(test_suite* ts) {
     ts->add( BOOST_CLASS_TEST_CASE( &TC_System::test_filetools, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_System::test_tempfile, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_System::test_socket, instance ) );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_System::test_swap_endian, instance ) );
 }
 

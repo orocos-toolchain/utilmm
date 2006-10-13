@@ -16,5 +16,7 @@
 #undef RETSIGTYPE
 #endif
 
+#undef WORDS_BIGENDIAN
+
 #endif
 
