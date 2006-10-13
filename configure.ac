@@ -14,6 +14,7 @@ dnl check for programs
 AC_CANONICAL_HOST
 
 dnl Check for libtool
+AC_C_BIGENDIAN
 AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
