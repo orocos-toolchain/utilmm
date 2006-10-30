@@ -18,10 +18,10 @@ public:
 
     void test_swap_endian()
     {
-        BOOST_REQUIRE_EQUAL(0x10, swap_endian<int8_t>(0x10));
-        BOOST_REQUIRE_EQUAL(0x1032, swap_endian<int16_t>(0x3210));
-        BOOST_REQUIRE_EQUAL(0x10325476, swap_endian<int32_t>(0x76543210));
-        BOOST_REQUIRE_EQUAL(0x1032547698badcfeLL,swap_endian<int64_t>(0xfedcba9876543210LL));
+        BOOST_REQUIRE_EQUAL(0x10, endian_swap<int8_t>(0x10));
+        BOOST_REQUIRE_EQUAL(0x1032, endian_swap<int16_t>(0x3210));
+        BOOST_REQUIRE_EQUAL(0x10325476, endian_swap<int32_t>(0x76543210));
+        BOOST_REQUIRE_EQUAL(0x1032547698badcfeLL,endian_swap<int64_t>(0xfedcba9876543210LL));
     }
 
     void test_filetools()
