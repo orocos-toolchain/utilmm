@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 #include <list>
-#include <getopt.h>
+// #include <getopt.h>
+#include <iosfwd>
 
-namespace { class cmdline_option; }
 namespace utilmm
 {
     class config_set;
@@ -19,6 +19,78 @@ namespace utilmm
         std::string source, error;
         bad_syntax(std::string const& source_, std::string const& error_ = "")
             : source(source_), error(error_) {}
+	char const* what() const throw() { return error.c_str(); }
+    };
+
+    class commandline_error : public std::exception
+    {
+    public:
+	~commandline_error() throw() {}
+	std::string error;
+	commandline_error(std::string const& error_)
+	    : error(error_) {}
+	char const* what() const throw() { return error.c_str(); }
+    };
+
+    /** Each option description is parsed and transformed in
+     * a cmdline_option object. The command_line code then
+     * uses these objects
+     */
+    class cmdline_option
+    {
+    public:
+        /** Argument types 
+         * Each option may have zero or one option
+         * the option is described using a or-ed 
+         * int of this enum
+         */
+        enum ArgumentType
+        {
+            None = 0,         /// no arguments
+            Optional = 1,     /// the argument may be ommitted
+
+            IntArgument = 2,    /// the argument is an integer
+            BoolArgument = 4,   /// the argument is a boolean, that is 0, 1, 'false' or 'true'
+            StringArgument = 8,  /// the argument is a string
+
+	    DefaultValue = 16   /// there is a default value for this argument
+        };
+
+    public:
+        /** Builds an option using the option description syntax as in @c command_line 
+         * @arg option the option description, see the command_line for its syntax 
+         * If @c option is not a valid description string, the constructor returns and
+         * isValid() will return false */
+        cmdline_option(const std::string& description);
+        ~cmdline_option();
+
+        bool        isMultiple() const;
+	bool	    isRequired() const;
+        std::string getConfigKey() const;
+        std::string getLong()   const;
+        std::string getShort()  const;
+        std::string getHelp()   const;
+
+	int getArgumentFlags() const;
+
+        bool hasArgument() const;
+        bool isArgumentOptional() const;
+
+	bool hasDefaultValue() const;
+	std::string getDefaultValue() const;
+
+        /** Checks that @c value is a valid string according
+         * to the argument type (int, bool or string)
+         */
+        bool checkArgument(const std::string& value) const;
+
+    private:
+        bool m_multiple;
+	bool m_required;
+        std::string m_config, m_long, m_short, m_help;
+
+        int  m_argument_flags;
+	std::string m_default;
     };
 
     /** command_line handling based on getopt_long
@@ -41,37 +113,44 @@ namespace utilmm
      * The full syntax is
      * 
      * @code
-     *    [*separator][config_key]:long_name[,short_name][=value_type|?value_type][|help]
+     *    [!*][config_key]:long_name[,short_name][=value_type[,default]|?value_type,default][:help]
      * @endcode
      *
      * where value_type is one of: int, bool, string
      *
      * When an option is found, an entry is added to a Config object with 
-     * the @c config_key key. The value associated depends on the option:
+     * the @c config_key key. The value associated is:
      * <ul>
-     *    <li> if the option has an argument it is this argument
-     *    <li> if the option has no argument, or if the argument is optional and none
-     *    was provided, it is set to a boolean value of true
+     *    <li> if there is an argument, the value is this argument
+     *    <li> if the option takes no argument, it is set to @c true
+     *    <li> if the argument is optional and not given, the value
+     *    is @c default. @c default is required in case of optional arguments
      * </ul>
      *
-     * If the option has a mandatory argument, add @c =value_type after the option 
-     * names. If it is optional, use the @c ?value_type syntax. The '@c int' and '@c bool' value types
-     * are checked by the command_line object and an error is generated if the user-provided
-     * value dos not match.
+     * If @c default is given, the option is set to @c default if it is not
+     * found
+     *
+     * If the option has a mandatory argument, add @c =value_type after the
+     * option names. If it is optional, use the @c ?value_type syntax. The '@c
+     * int' and '@c bool' value types are checked by the command_line object
+     * and an error is generated if the user-provided value dos not match.
      * 
-     * <h2> Multiple option on the command line </h2>
-     * When the same option is provided more than once on the command line, the normal 
-     * behaviour is to use the value of the latest. However, you can also get all the values
-     * by adding <tt>*separator_char</tt> at the front of the description line. In that case,
-     * the config value will be all the values given by the user separated by the provided
-     * separator character.
+     * <h2> Multiplicity (* and ! options) </h2>
+     * When the same option is provided more than once on the command line, the
+     * normal behaviour is to use the value of the latest. However, you can
+     * also get all the values by adding <tt>*</tt> at the front of the
+     * description line. In that case, the config value will a list of values
+     * in the config object
      *
-     * For instance, an option like the @c -I option of @c gcc will be described using <br>
-     * <tt>*::include,I=string|include path</tt>
+     * For instance, an option like the @c -I option of @c gcc will be
+     * described using <br> <tt>*:include,I=string|include path</tt>. The
+     * result of <tt>gcc -I /a/path -I=/another/path</tt> can then be retrieved
+     * with 
+     *	<code>
+     *	    list<string> includes = config.get< list<string> >('include');
+     *	</code>
      *
-     * In which case, the command_line class will build a config value of '/a/path:/another/path' under
-     * the key 'include' when it encounters the command line  <br>
-     * <tt>gcc -I /a/path -I=/another/path</tt>
+     * If the ! flag is set, the option is required.
      * 
      * <h2> Examples </h2>
      * 
@@ -103,9 +182,10 @@ namespace utilmm
          * @param argc the argument count
          * @param argv the argument value
          * @param config the Config object the option values will be written to
-         * @return true on success, false on failure
+	 *
+	 * @throws commandline_error
          */
-        bool parse(int argc, char* const argv[], config_set& config);
+        void parse(int argc, char* const argv[], config_set& config);
 
         /** Remaining command line options
          * After all options are matched, and if no error has occured,
@@ -114,12 +194,26 @@ namespace utilmm
          */
         std::list<std::string> remaining() const;
 
+	/** Sets the first line to appear in usage() */
+	void setBanner(std::string const& banner);
+    
+	/** Outputs a help message to @c out */
+	void usage(std::ostream& out) const;
+
     private:
         void add_argument(config_set& config, cmdline_option const& optdesc, std::string const& value);
+	int option_match(config_set& config, cmdline_option const& opt, int argc, char* const* argv, int i);
 
+	std::string m_banner;
         Options    m_options;
         std::list<std::string> m_remaining;
     };
+
+    std::ostream& operator << (std::ostream& stream, utilmm::command_line const& cmdline)
+    { 
+	cmdline.usage(stream);
+	return stream;
+    }
 }
 
 #endif

@@ -1,8 +1,8 @@
 #include "testsuite.hh"
 #include <utilmm/configfile/configfile.hh>
 #include <utilmm/configfile/commandline.hh>
-#include <iostream>
 #include <boost/filesystem/path.hpp>
+#include <utilmm/stringlist.hh>
 #include <algorithm>
 
 using namespace utilmm;
@@ -73,43 +73,115 @@ public:
 	BOOST_REQUIRE(not_a_child.empty());
     }
 
+    void test_cmdline_option_parsing()
+    {
+	{ cmdline_option opt("*:include,I=string:include path");
+	    BOOST_REQUIRE(!opt.isRequired());
+	    BOOST_REQUIRE(opt.isMultiple());
+	    BOOST_REQUIRE_EQUAL("include", opt.getLong());
+	    BOOST_REQUIRE_EQUAL("include", opt.getConfigKey());
+	    BOOST_REQUIRE_EQUAL("I", opt.getShort());
+	    BOOST_REQUIRE(opt.hasArgument());
+	    BOOST_REQUIRE(!opt.isArgumentOptional());
+	    BOOST_REQUIRE(!opt.hasDefaultValue());
+	    BOOST_REQUIRE(opt.getArgumentFlags() & cmdline_option::StringArgument);
+	    BOOST_REQUIRE_EQUAL("include path", opt.getHelp());
+	}
+	{ cmdline_option opt("!:required=bool:is a required argument");
+	    BOOST_REQUIRE(opt.isRequired());
+	    BOOST_REQUIRE(!opt.isMultiple());
+	    BOOST_REQUIRE_EQUAL("required", opt.getLong());
+	    BOOST_REQUIRE_EQUAL("required", opt.getConfigKey());
+	    BOOST_REQUIRE_EQUAL("", opt.getShort());
+	    BOOST_REQUIRE(opt.hasArgument());
+	    BOOST_REQUIRE(opt.getArgumentFlags() & cmdline_option::BoolArgument);
+	    BOOST_REQUIRE_EQUAL("is a required argument", opt.getHelp());
+	}
+	{ cmdline_option opt("vkey:verbose,v?int,1:include path");
+	    BOOST_REQUIRE(!opt.isRequired());
+	    BOOST_REQUIRE(!opt.isMultiple());
+	    BOOST_REQUIRE_EQUAL("vkey", opt.getConfigKey());
+	    BOOST_REQUIRE_EQUAL("verbose", opt.getLong());
+	    BOOST_REQUIRE_EQUAL("v", opt.getShort());
+	    BOOST_REQUIRE(opt.hasArgument());
+	    BOOST_REQUIRE(opt.isArgumentOptional());
+	    BOOST_REQUIRE(opt.hasDefaultValue());
+	    BOOST_REQUIRE(opt.getArgumentFlags() & cmdline_option::IntArgument);
+	    BOOST_REQUIRE_EQUAL("1", opt.getDefaultValue());
+	    BOOST_REQUIRE_EQUAL("include path", opt.getHelp());
+	}
+	{ cmdline_option opt(":quiet");
+	    BOOST_REQUIRE(!opt.isRequired());
+	    BOOST_REQUIRE(!opt.isMultiple());
+	    BOOST_REQUIRE_EQUAL("quiet", opt.getConfigKey());
+	    BOOST_REQUIRE_EQUAL("quiet", opt.getLong());
+	    BOOST_REQUIRE_EQUAL("", opt.getShort());
+	    BOOST_REQUIRE(!opt.hasArgument());
+	    BOOST_REQUIRE_EQUAL("", opt.getHelp());
+	}
+
+	// no long option
+        BOOST_REQUIRE_THROW( cmdline_option option("*::bla"), bad_syntax );
+	// invalid long option
+        BOOST_REQUIRE_THROW( cmdline_option option("*:invalid key:bla"), bad_syntax );
+	// invalid data type
+        BOOST_REQUIRE_THROW( cmdline_option option(":blo=badtype"), bad_syntax );
+	// optional argument and no default value
+        BOOST_REQUIRE_THROW( cmdline_option option(":foo?int"), bad_syntax );
+	// required option, required argument and default value
+	BOOST_REQUIRE_THROW( cmdline_option opt("!:required=bool,true:is a required argument"), bad_syntax );
+	// required option, optional argument and default value
+	BOOST_REQUIRE_NO_THROW( cmdline_option opt("!:required?bool,true:is a required argument") );
+    }
+
     void test_commandline()
     {
+	char const* valid_spec[] = { 
+	    "*:include,I=string:include path",
+	    "!:required=bool:is a required argument",
+	    "vkey:verbose,v?int,1:include path",
+	    "defval:default-value=int,10:should be set to default value",
+	    ":quiet",
+	    0
+	};
+
         {
-            char const* valid_spec[] = { 
-                "*:include,I=string|include path",
-                "vkey:verbose,v?int|include path",
-                ":quiet",
-                0
-            };
+            list<string> strlist_spec;
+	    for (char const** specline = valid_spec; *specline; ++specline)
+		strlist_spec.push_back(*specline);
 
             command_line cmdline(valid_spec);
             check_cmdline_properties(cmdline);
         }
 
-        char const* invalid_specs[] = {
-            "*::bla", 0,
-            ":blo=badtype", 0
-        };
-        BOOST_REQUIRE_THROW( command_line cmdline(invalid_specs), bad_syntax );
-        BOOST_REQUIRE_THROW( command_line cmdline(invalid_specs + 2), bad_syntax );
+	command_line cmdline(valid_spec);
+	check_cmdline_properties(cmdline);
 
-        {
-            list<string> valid_spec;
-            valid_spec.push_back("*:include,I=string|include path");
-            valid_spec.push_back("vkey:verbose,v?int|include path");
-            valid_spec.push_back(":quiet");
-            command_line cmdline(valid_spec);
-            check_cmdline_properties(cmdline);
-        }
+	config_set config;
+
+	char* missing_required[] = { "--quiet" };
+	BOOST_REQUIRE_THROW( cmdline.parse(1, missing_required, config), commandline_error );
+
+	char* missing_argument[] = { "--required=true", "--include" };
+	BOOST_REQUIRE_THROW( cmdline.parse(2, missing_argument, config), commandline_error );
+
+	char* missing_argument_short[] = { "--required=true", "-I", "--quiet" };
+	BOOST_REQUIRE_THROW( cmdline.parse(3, missing_argument_short, config), commandline_error );
+
+	char* invalid_argument_type[] = { "--required=true", "--verbose=bla" };
+	BOOST_REQUIRE_THROW( cmdline.parse(2, invalid_argument_type, config), commandline_error );
+
+	char* overriding_default_value[] = { "--required=true", "--default-value=20" };
+	BOOST_REQUIRE_NO_THROW( cmdline.parse(2, overriding_default_value, config) );
+	BOOST_REQUIRE_EQUAL(20, config.get<int>("defval"));
     }
 
     void check_cmdline_properties(command_line& cmdline)
     {
         config_set config;
-        char* valid_argv[] = { "-I", "bla", "--include", "test", "--quiet", "--verbose", "bla.cpp" };
+        char* valid_argv[] = { "--required=false", "-I", "bla", "--include=test", "--quiet", "--verbose", "bla.cpp" };
         
-        BOOST_REQUIRE(( cmdline.parse(7, valid_argv, config) ));
+        cmdline.parse(7, valid_argv, config);
         BOOST_REQUIRE_EQUAL(1UL, cmdline.remaining().size() );
         BOOST_REQUIRE_EQUAL("bla.cpp", cmdline.remaining().front() );
 
@@ -117,8 +189,10 @@ public:
         BOOST_REQUIRE_EQUAL(2UL, includes.size());
         BOOST_REQUIRE( "bla" ==  includes.back() || "bla" == includes.front() );
         BOOST_REQUIRE( "test" ==  includes.back() || "test" == includes.front() );
+
         BOOST_REQUIRE_EQUAL( config.get<bool>("quiet"), true );
-        BOOST_REQUIRE_EQUAL( config.get<bool>("vkey"), true );
+        BOOST_REQUIRE_EQUAL( config.get<bool>("vkey"), 1 );
+        BOOST_REQUIRE_EQUAL( config.get<int>("defval"), 10 );
     }
 
 private:
@@ -133,6 +207,7 @@ void test_configfile(test_suite* ts) {
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Configfile::test_scalar, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Configfile::test_list, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Configfile::test_child, instance ) );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_Configfile::test_cmdline_option_parsing, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Configfile::test_commandline, instance ) );
 }
 
