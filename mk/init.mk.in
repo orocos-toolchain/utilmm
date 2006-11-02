@@ -90,6 +90,7 @@ all: build
 distclean: distclean-common
 doc:
 test:
+install: build
 
 distclean-common: clean
 	rm -f Makefile
