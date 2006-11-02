@@ -5,7 +5,7 @@
 namespace utilmm {
     typedef std::list<std::string> stringlist;
 
-    stringlist split(std::string const& s, std::string const& sep = " ", bool ignore_empty = true)
+    inline stringlist split(std::string const& s, std::string const& sep = " ", bool ignore_empty = true)
     {
         using std::string;
 
@@ -29,7 +29,7 @@ namespace utilmm {
         }
     }
 
-    std::string join(stringlist const& l, std::string const& sep = " ")
+    inline std::string join(stringlist const& l, std::string const& sep = " ")
     {
         using std::string;
 
@@ -45,7 +45,7 @@ namespace utilmm {
         return s;
     }
 
-    std::string upcase(std::string const& s)
+    inline std::string upcase(std::string const& s)
     {
         using std::string;
         string ret(s);
