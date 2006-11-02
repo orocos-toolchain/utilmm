@@ -1,6 +1,7 @@
 #include "utilmm/configfile/commandline.hh"
 
 #include "utilmm/configfile/configset.hh"
+#include "utilmm/stringtools.hh"
 #include <boost/regex.hpp>
 
 #include <stdlib.h>

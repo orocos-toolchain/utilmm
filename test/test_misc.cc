@@ -1,6 +1,6 @@
 #include "testsuite.hh"
 #include <utilmm/auto_flag.hh>
-#include <utilmm/stringlist.hh>
+#include <utilmm/stringtools.hh>
 using namespace utilmm;
 
 class TC_Misc
