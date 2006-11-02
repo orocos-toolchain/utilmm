@@ -55,6 +55,9 @@ namespace utilmm {
 
         return ret;
     }
+
+    inline bool starts_with(std::string const& str, std::string const& start)
+    { return std::string(str, 0, start.length()) == start; }
 }
 
 

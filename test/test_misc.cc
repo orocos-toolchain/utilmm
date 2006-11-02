@@ -73,6 +73,14 @@ public:
             string id = "a_b c";
             BOOST_REQUIRE_EQUAL("A_B C", upcase(id));
         }
+
+	{ 
+	    string match = "do begins with bla";
+	    string nomatch = "does not begins with bla";
+	    string seed = "do begins";
+	    BOOST_REQUIRE(starts_with(match, seed));
+	    BOOST_REQUIRE(!starts_with(nomatch, seed));
+	}
     }
 };
 
