@@ -2,7 +2,7 @@
 #include <utilmm/configfile/configfile.hh>
 #include <utilmm/configfile/commandline.hh>
 #include <boost/filesystem/path.hpp>
-#include <utilmm/stringlist.hh>
+#include <utilmm/stringtools.hh>
 #include <algorithm>
 
 using namespace utilmm;
