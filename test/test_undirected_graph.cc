@@ -1,6 +1,12 @@
 #include "testsuite.hh"
+#include <boost/graph/adjacency_list.hpp>
 #include <utilmm/iterator_sequence.hh>
+#include <utilmm/undirected_graph.hh>
 #include <vector>
+#include <boost/concept_check.hpp>
+#include <boost/graph/connected_components.hpp>
+#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/breadth_first_search.hpp>
 
 using namespace utilmm;
 using namespace std;
@@ -53,6 +59,30 @@ public:
 	it_seq -= 2;
 	BOOST_REQUIRE_EQUAL(*it_seq, 1);
 	BOOST_REQUIRE_EQUAL(1, it_seq - it_seq_begin);
+    }
+
+    // Concept checking
+    typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS> BaseGraph;
+    typedef undirected_graph< BaseGraph > UndirectedGraph;
+    BOOST_CLASS_REQUIRE(UndirectedGraph, boost, AdjacencyGraphConcept);
+    BOOST_CLASS_REQUIRE(UndirectedGraph, boost, IncidenceGraphConcept);
+
+
+    /* Check that some algorithms work on undirected graph */
+    void test_undirected_algorithms()
+    {
+	BaseGraph g;
+	UndirectedGraph undirected(g);
+	using namespace boost;
+
+	associative_property_map< std::map<UndirectedGraph::vertex_descriptor, int> > component_map;
+	associative_property_map< std::map<UndirectedGraph::vertex_descriptor, default_color_type> > color_map;
+	connected_components(undirected, component_map, boost::color_map(color_map));
+
+	default_dfs_visitor dfs_vis;
+	depth_first_search(undirected, visitor(dfs_vis));
+	default_bfs_visitor bfs_vis;
+	breadth_first_search(undirected, *vertices(g).first, visitor(bfs_vis));
     }
 };
 
