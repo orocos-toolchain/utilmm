@@ -14,6 +14,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/static_assert.hpp>
 #include <utilmm/iterator_sequence.hh>
+#include <boost/iterator/transform_iterator.hpp>
 
 namespace utilmm {
     struct undirected_graph_tag { };
@@ -36,16 +37,61 @@ namespace utilmm {
 
 	// Graph requirements
 	typedef typename Traits::vertex_descriptor vertex_descriptor;
-	typedef typename Traits::edge_descriptor edge_descriptor;
 	typedef boost::undirected_tag directed_category;
 	typedef typename Traits::edge_parallel_category edge_parallel_category;
 	typedef typename Traits::traversal_category traversal_category;
 
+	// Add a 'reverse' flag to edge descriptors, so that source() and target() know what
+	// needs to be done
+	typedef std::pair<typename Traits::edge_descriptor, bool> edge_descriptor;
+	typedef edge_descriptor (*make_undirected_edge_descriptor)(typename Traits::edge_descriptor);
+
+	// Out edges do not need to be swapped
+	static edge_descriptor make_out_edge_descriptor(typename Traits::edge_descriptor e)
+	{ return make_pair(e, false); }
+	class base_out_edge_iterator : 
+	    public boost::transform_iterator<make_undirected_edge_descriptor, typename Traits::out_edge_iterator>
+	{
+	    typedef boost::transform_iterator<make_undirected_edge_descriptor, typename Traits::out_edge_iterator>
+		base_type;
+
+	public:
+	    base_out_edge_iterator() {}
+	    base_out_edge_iterator(typename Traits::out_edge_iterator e)
+		: base_type(e, make_out_edge_descriptor) {}
+	};
+
+	static edge_descriptor make_in_edge_descriptor(typename Traits::edge_descriptor e)
+	{ return make_pair(e, true); }
+	class base_in_edge_iterator : 
+	    public boost::transform_iterator<make_undirected_edge_descriptor, typename Traits::in_edge_iterator>
+	{
+	    typedef boost::transform_iterator<make_undirected_edge_descriptor, typename Traits::in_edge_iterator>
+		base_type;
+
+	public:
+	    base_in_edge_iterator() {}
+	    base_in_edge_iterator(typename Traits::in_edge_iterator e)
+		: base_type(e, make_in_edge_descriptor) {}
+	};
+
+	// Do not swap plain edge iterators
+	class edge_iterator : 
+	    public boost::transform_iterator<make_undirected_edge_descriptor, typename Traits::edge_iterator>
+	{
+	    typedef boost::transform_iterator<make_undirected_edge_descriptor, typename Traits::edge_iterator>
+		base_type;
+	public:
+	    edge_iterator() {}
+	    edge_iterator(typename Traits::edge_iterator e)
+		: base_type(e, make_out_edge_descriptor) {}
+	};
+
 	// IncidenceGraph requirements
 	typedef typename Traits::degree_size_type degree_size_type;
 	typedef iterator_sequence
-	    < typename Traits::in_edge_iterator
-	    , typename Traits::out_edge_iterator
+	    < base_in_edge_iterator
+	    , base_out_edge_iterator
 	    > in_edge_iterator;
 	typedef in_edge_iterator out_edge_iterator;
 
@@ -195,14 +241,20 @@ namespace utilmm {
     inline typename boost::graph_traits<BidirectionalGraph>::vertex_descriptor
     source(const Edge& e, const undirected_graph<BidirectionalGraph,GRef>& g)
     {
-	return source(e, g.m_g);
+	if (e.second)
+	    return target(e.first, g.m_g);
+	else
+	    return source(e.first, g.m_g);
     }
 
     template <class Edge, class BidirectionalGraph, class GRef>
     inline typename boost::graph_traits<BidirectionalGraph>::vertex_descriptor
     target(const Edge& e, const undirected_graph<BidirectionalGraph,GRef>& g)
     {
-	return target(e, g.m_g);
+	if (e.second)
+	    return source(e.first, g.m_g);
+	else
+	    return target(e.first, g.m_g);
     }
 
 

@@ -67,8 +67,39 @@ public:
     BOOST_CLASS_REQUIRE(UndirectedGraph, boost, AdjacencyGraphConcept);
     BOOST_CLASS_REQUIRE(UndirectedGraph, boost, IncidenceGraphConcept);
 
+    /* Test that the edges have the proper source() and target() */
+    void test_undirected_incidence()
+    {
+	BaseGraph g;
+	UndirectedGraph undirected(g);
+	using namespace boost;
 
-    /* Check that some algorithms work on undirected graph */
+	BaseGraph::vertex_descriptor v1, v2, v3;
+	UndirectedGraph::out_edge_iterator it, end;
+
+	v1 = add_vertex(g);
+	v2 = add_vertex(g);
+	v3 = add_vertex(g);
+	add_edge(v1, v2, g);
+	add_edge(v2, v3, g);
+	add_edge(v3, v1, g);
+
+	tie(it, end) = out_edges(v1, undirected);
+	BOOST_REQUIRE(it->second);
+	BOOST_REQUIRE(source(*it, undirected) == v1);
+	BOOST_REQUIRE(target(*it, undirected) == v2 || target(*it, undirected) == v3);
+	BOOST_REQUIRE(!it->second);
+	BOOST_REQUIRE(source(*++it, undirected) == v1);
+	BOOST_REQUIRE(target(*it, undirected) == v2 || target(*it, undirected) == v3);
+	
+	tie(it, end) = out_edges(v2, undirected);
+	BOOST_REQUIRE(source(*it, undirected) == v2);
+	BOOST_REQUIRE(target(*it, undirected) == v1 || target(*it, undirected) == v3);
+	BOOST_REQUIRE(source(*++it, undirected) == v2);
+	BOOST_REQUIRE(target(*it, undirected) == v1 || target(*it, undirected) == v3);
+    }
+
+    /* Check that some algorithms compile on undirected graph */
     void test_undirected_algorithms()
     {
 	BaseGraph g;
@@ -90,5 +121,6 @@ void test_undirected_graph(test_suite* ts)
 {
     boost::shared_ptr<TC_UndirectedGraph> instance( new TC_UndirectedGraph );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_UndirectedGraph::test_iterator_sequence, instance ) );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_UndirectedGraph::test_undirected_incidence, instance ) );
 }
 
