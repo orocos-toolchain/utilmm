@@ -15,7 +15,8 @@ namespace utilmm {
 	public boost::iterator_facade<
 	    iterator_sequence<It1, It2>,
 	    typename It1::value_type,
-	    typename boost::iterator_traversal<It1>::type>
+	    typename boost::iterator_traversal<It1>::type,
+	    typename It1::reference >
     {
 	typedef iterator_sequence<It1, It2> Self;
 
