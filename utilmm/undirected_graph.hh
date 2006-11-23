@@ -120,6 +120,30 @@ namespace utilmm {
 	static vertex_descriptor null_vertex()
 	{ return Traits::null_vertex(); }
 
+	// Bundled properties support
+        typename boost::graph::detail::bundled_result<BidirectionalGraph,
+                 edge_descriptor>::type&
+        operator[](edge_descriptor x)
+        { return m_g[x.first]; }
+
+        typename boost::graph::detail::bundled_result<BidirectionalGraph,
+                 edge_descriptor>::type const&
+        operator[](edge_descriptor x) const
+        { return m_g[x.first]; }
+
+
+
+        typename boost::graph::detail::bundled_result<BidirectionalGraph,
+                 vertex_descriptor>::type&
+        operator[](vertex_descriptor x)
+        { return m_g[x]; }
+
+        typename boost::graph::detail::bundled_result<BidirectionalGraph,
+                 vertex_descriptor>::type const&
+        operator[](vertex_descriptor x) const
+        { return m_g[x]; }
+
+
 	// would be private, but template friends aren't portable enough.
      // private:
 	GraphRef m_g;
