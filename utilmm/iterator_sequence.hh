@@ -1,10 +1,15 @@
 #ifndef UTILMM_ITERATOR_SEQUENCE_HPP
 #define UTILMM_ITERATOR_SEQUENCE_HPP
+
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/iterator_traits.hpp>
 
-
 namespace utilmm {
+    /**
+     * The iterator_sequence template takes two iterator ranges and iterates in the two ranges
+     * as if they were a single sequence. The only constraint is that both iterator types have
+     * the same value_type.
+     */
     template<typename It1, typename It2>
     class iterator_sequence : 
 	public boost::iterator_facade<
@@ -15,6 +20,18 @@ namespace utilmm {
 	typedef iterator_sequence<It1, It2> Self;
 
     public:
+	/** Builds a new sequence
+	 * Note that for an iterator sequence (fb, fe) + (sb, se),
+	 * <ul>
+	 *  <li> the begin iterator is i_s(fb, fe, sb, sb)
+	 *  <li> the end iterator is i_s(fe, fe, se, se)
+	 * </ul>
+	 *
+	 * @param first the position in the first range
+	 * @param first_end the end of the first range
+	 * @param second_begin the beginning of the second range
+	 * @param second the position in the second range
+	 */
 	iterator_sequence(
 		It1 first, It1 first_end,
 		It2 second_begin, It2 second)
