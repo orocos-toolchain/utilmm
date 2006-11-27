@@ -88,8 +88,8 @@ public:
 	BOOST_REQUIRE(it->second);
 	BOOST_REQUIRE(source(*it, undirected) == v1);
 	BOOST_REQUIRE(target(*it, undirected) == v2 || target(*it, undirected) == v3);
-	BOOST_REQUIRE(!it->second);
-	BOOST_REQUIRE(source(*++it, undirected) == v1);
+	BOOST_REQUIRE(!(++it)->second);
+	BOOST_REQUIRE(source(*it, undirected) == v1);
 	BOOST_REQUIRE(target(*it, undirected) == v2 || target(*it, undirected) == v3);
 	
 	tie(it, end) = out_edges(v2, undirected);
