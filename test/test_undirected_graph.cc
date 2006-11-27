@@ -2,6 +2,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <utilmm/iterator_sequence.hh>
 #include <utilmm/undirected_graph.hh>
+#include <utilmm/undirected_dfs.hh>
 #include <vector>
 #include <boost/concept_check.hpp>
 #include <boost/graph/connected_components.hpp>
@@ -99,6 +100,7 @@ public:
 	BOOST_REQUIRE(target(*it, undirected) == v1 || target(*it, undirected) == v3);
     }
 
+
     /* Check that some algorithms compile on undirected graph */
     void test_undirected_algorithms()
     {
@@ -106,14 +108,23 @@ public:
 	UndirectedGraph undirected(g);
 	using namespace boost;
 
+	typedef associative_property_map< std::map<BaseGraph::vertex_descriptor, default_color_type> > 
+	    VertexColorMap;
 	associative_property_map< std::map<UndirectedGraph::vertex_descriptor, int> > component_map;
-	associative_property_map< std::map<UndirectedGraph::vertex_descriptor, default_color_type> > color_map;
+	VertexColorMap color_map;
 	connected_components(undirected, component_map, boost::color_map(color_map));
 
 	default_dfs_visitor dfs_vis;
 	depth_first_search(undirected, visitor(dfs_vis));
 	default_bfs_visitor bfs_vis;
 	breadth_first_search(undirected, *vertices(g).first, visitor(bfs_vis));
+
+	UndirectedGraph::vertex_descriptor v1 = add_vertex(g);
+	// typedef associative_property_map< std::map<BaseGraph::edge_descriptor, default_color_type> > 
+	//     EdgeColorMap;
+	// EdgeColorMap edge_color_map;
+	utilmm::undirected_dfs(undirected, dfs_vis,
+		color_map, make_undirected_edge_map(get(boost::edge_color_t(), g)), v1);
     }
 };
 
