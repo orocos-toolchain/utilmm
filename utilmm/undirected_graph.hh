@@ -16,6 +16,8 @@
 #include <utilmm/iterator_sequence.hh>
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <boost/type_traits.hpp>
+
 namespace utilmm {
     struct undirected_graph_tag { };
 
@@ -305,10 +307,46 @@ namespace utilmm {
       };
 
     } // namespace detail
+
+    /** This class adapts a property map on the edges of a graph to a property map
+     * on the edges of the corresponding undirected graph */
+    template<typename PropertyMap>
+    class undirected_property_map 
+    { 
+    public:
+	undirected_property_map(PropertyMap pmap)
+	    : m_map(pmap) {}
+
+	PropertyMap& map() { return m_map; }
+	PropertyMap const& map() const { return m_map; }
+
+    private:
+	PropertyMap m_map;
+    };
+
+    template<typename PropertyMap, typename EdgeDescriptor, typename ValueType>
+    void put(undirected_property_map<PropertyMap>& map, 
+	    EdgeDescriptor e, ValueType value)
+    { put(map.map(), e.first, value); }
+    template<typename PropertyMap, typename EdgeDescriptor>
+    typename boost::property_traits<PropertyMap>::value_type
+	get(undirected_property_map<PropertyMap> const& map, 
+	    EdgeDescriptor e)
+    { return get(map.map(), e.first); }
+
+    template<typename PropertyMap>
+    undirected_property_map<PropertyMap> make_undirected_edge_map(PropertyMap pmap)
+    { return undirected_property_map<PropertyMap>(pmap); }
+
+
 } // namespace utilmm
 
 // Include specialization in the boost namespace
 namespace boost {
+    template<typename PropertyMap>
+    struct property_traits< utilmm::undirected_property_map<PropertyMap> >
+	: property_traits<PropertyMap> {};
+
     template <>
     struct vertex_property_selector<utilmm::undirected_graph_tag> {
 	typedef utilmm::detail::undirected_graph_vertex_property_selector type;
@@ -319,19 +357,29 @@ namespace boost {
 	typedef utilmm::detail::undirected_graph_edge_property_selector type;
     };
 
+    namespace detail {
+	template<typename BidirGraph, typename GRef, typename Property>
+	struct get_property_map_type { };
+	template<typename BidirGraph, typename Property>
+	struct get_property_map_type<BidirGraph, const BidirGraph&, Property>
+	{ typedef typename property_map<BidirGraph, Property>::const_type type; };
+	template<typename BidirGraph, typename Property>
+	struct get_property_map_type<BidirGraph, BidirGraph&, Property>
+	{ typedef typename property_map<BidirGraph, Property>::type type; };
+    }
+
     template <class BidirGraph, class GRef, class Property>
-    typename property_map<BidirGraph, Property>::type
+    typename detail::get_property_map_type<BidirGraph, GRef, Property>::type
     get(Property p, utilmm::undirected_graph<BidirGraph,GRef>& g)
     {
       return get(p, g.m_g);
     }
 
     template <class BidirGraph, class GRef, class Property>
-    typename property_map<BidirGraph, Property>::const_type
+    typename detail::get_property_map_type<BidirGraph, GRef, Property>::type
     get(Property p, const utilmm::undirected_graph<BidirGraph,GRef>& g)
     {
-      const BidirGraph& gref = g.m_g; // in case GRef is non-const
-      return get(p, gref);
+      return get(p, g.m_g);
     }
 
     template <class BidirectionalGraph, class GRef, class Property, class Key>

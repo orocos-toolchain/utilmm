@@ -63,10 +63,30 @@ public:
     }
 
     // Concept checking
-    typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS> BaseGraph;
-    typedef undirected_graph< BaseGraph > UndirectedGraph;
+    typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS,
+	    boost::no_property, boost::property<boost::edge_color_t, boost::default_color_type> > BaseGraph;
+    typedef undirected_graph< BaseGraph, const BaseGraph& > UndirectedGraph;
     BOOST_CLASS_REQUIRE(UndirectedGraph, boost, AdjacencyGraphConcept);
     BOOST_CLASS_REQUIRE(UndirectedGraph, boost, IncidenceGraphConcept);
+
+    void test_undirected_property_maps_adaptor()
+    {
+	using namespace boost;
+	BaseGraph g;
+	UndirectedGraph undirected(g);
+	BaseGraph::vertex_descriptor v1, v2;
+	v1 = add_vertex(g);
+	v2 = add_vertex(g);
+	BaseGraph::edge_descriptor e = add_edge(v1, v2, g).first;
+	UndirectedGraph::edge_descriptor u_e = *edges(undirected).first;
+
+	put(boost::edge_color_t(), g, e, boost::white_color);
+	
+	typedef property_map<UndirectedGraph, edge_color_t>::const_type PMap;
+	undirected_property_map<PMap> u_pmap(get(boost::edge_color_t(), undirected));
+	int value = get(u_pmap, u_e);
+	BOOST_REQUIRE_EQUAL(boost::white_color, value);
+    }
 
     /* Test that the edges have the proper source() and target() */
     void test_undirected_incidence()
@@ -133,5 +153,6 @@ void test_undirected_graph(test_suite* ts)
     boost::shared_ptr<TC_UndirectedGraph> instance( new TC_UndirectedGraph );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_UndirectedGraph::test_iterator_sequence, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_UndirectedGraph::test_undirected_incidence, instance ) );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_UndirectedGraph::test_undirected_property_maps_adaptor, instance ) );
 }
 
