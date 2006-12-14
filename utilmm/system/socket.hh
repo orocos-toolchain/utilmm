@@ -41,6 +41,7 @@ namespace utilmm
 	int fd() const;
 	bool try_wait(int what) const;
 	void wait(int what) const;
+	void flush() const;
     };
 
     class socket : public base_socket

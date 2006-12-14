@@ -157,6 +157,9 @@ namespace utilmm
 	return ret;
     }
 
+    void base_socket::flush() const
+    { fsync(fd()); }
+
 
     socket::socket(Domain domain, Type type, std::string const& connect_to)
 	: base_socket(domain, type)
