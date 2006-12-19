@@ -37,7 +37,7 @@ void config_file::read(const std::string& name)
 
     static const string
         regexp_header("^[[:blank:]]*"),
-        regexp_trail("(?:#.*)?$");
+        regexp_trail("[[:blank:]]*(?:#.*)?$");
 
     static regex
         rx_empty(regexp_header + regexp_trail),
