@@ -51,7 +51,7 @@ void config_file::read(const std::string& name)
 
     config_set* cur_set = this;
     
-    int line_number = 0;
+    int line_number = 1;
     stringbuf linebuf;
     const string empty_string;
     while (! file.eof())
