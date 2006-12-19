@@ -95,7 +95,7 @@ void config_file::read(const std::string& name)
             else if (regex_match(value, attribute_value, rx_attribute)) 
                 cur_set->insert( key, attribute_value[1] );
             else
-                throw parse_error(line_number, "expected either '" + key + " {' or '" + key + ": value', found " + key + value);
+                throw parse_error(line_number, "expected '" + key + ": value', found " + key + value);
         }
         else if (regex_match(line, rx_close_bracket))
         {
@@ -107,7 +107,9 @@ void config_file::read(const std::string& name)
             throw parse_error(line_number, "expected \"key: value\", found " + line);
     }
 
-    if (cur_set -> parent())
+    if (mode == FindBracket)
+        throw parse_error(line_number, "expected '{', got end of file");
+    else if (cur_set -> parent())
         throw parse_error(line_number, "expected '}' before end of file");
 }
 
