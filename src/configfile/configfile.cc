@@ -72,7 +72,7 @@ void config_file::read(const std::string& name)
         if (mode == FindBracket)
         {
             if (! regex_match(line, rx_open_bracket))
-                throw parse_error(line_number, "Expected '{', found " + line);
+                throw parse_error(line_number, "expected '{', found " + line);
 
             mode = Normal;
         }
@@ -95,19 +95,19 @@ void config_file::read(const std::string& name)
             else if (regex_match(value, attribute_value, rx_attribute)) 
                 cur_set->insert( key, attribute_value[1] );
             else
-                throw parse_error(line_number, "Syntax error in " + value);
+                throw parse_error(line_number, "expected either '" + key + " {' or '" + key + ": value', found " + key + value);
         }
         else if (regex_match(line, rx_close_bracket))
         {
             if (cur_set -> parent() == 0)
-                throw parse_error(line_number, "Unmatched bracket");
+                throw parse_error(line_number, "unmatched bracket");
             cur_set = cur_set->parent();
         }
         else
-            throw parse_error(line_number, "Syntax error in line " + line);
+            throw parse_error(line_number, "expected \"key: value\", found " + line);
     }
 
     if (cur_set -> parent())
-        throw parse_error(line_number, "Expected '}' before end of file");
+        throw parse_error(line_number, "expected '}' before end of file");
 }
 
