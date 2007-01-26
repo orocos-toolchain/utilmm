@@ -79,7 +79,7 @@ AC_DEFUN([CLBS_BOOST_SUBLIB],
   CPPFLAGS="$BOOST_CPPFLAGS $CPPFLAGS"
   AC_CHECK_HEADER([$3], [has_working_$1=yes], [has_working_$1=no])
     
-  if test "$has_working_$1" = "yes"; then
+  if test "$has_working_$1" = "yes" && test -n "$2"; then
     AC_MSG_CHECKING([for the Boost/$1 library])
     LDFLAGS="$BOOST_LDFLAGS ifelse([$2], [], [], -lboost_$2) $PTHREAD_LIBS $LDFLAGS"
     AC_LINK_IFELSE(
@@ -147,6 +147,8 @@ AC_DEFUN([CLBS_BOOST_REGEX],
 [ CLBS_BOOST_SUBLIB(regex, [regex], [boost/regex.hpp], [boost::regex], [$1], [$2]) ])
 AC_DEFUN([CLBS_BOOST_FILESYSTEM], 
 [ CLBS_BOOST_SUBLIB(filesystem, [filesystem], [boost/filesystem/path.hpp], [boost::filesystem::path], [$1], [$2]) ])
+AC_DEFUN([CLBS_BOOST_GRAPH], 
+[ CLBS_BOOST_SUBLIB(graph, [], [boost/graph/adjacency_list.hpp], [boost::adjacency_list], [$1], [$2]) ])
 
 AC_DEFUN([CLBS_BOOST_TEST], [
     AC_LANG_PUSH(C++)

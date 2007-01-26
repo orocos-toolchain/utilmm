@@ -30,6 +30,7 @@ CLBS_CHECK_BOOST(, [AC_MSG_ERROR([Unable to find Boost libraries])])
 CLBS_BOOST_THREAD([], [AC_MSG_ERROR([Unable to find the Boost/Thread library])])
 CLBS_BOOST_REGEX([], [AC_MSG_ERROR([Unable to find the Boost/Regex library])])
 CLBS_BOOST_FILESYSTEM([], [AC_MSG_ERROR([Unable to find the Boost/Filesystem library])])
+CLBS_BOOST_GRAPH([], [AC_MSG_ERROR([Unable to find the Boost/Graph library])])
 CLBS_TEST_SUPPORT
 
 dnl check or types
