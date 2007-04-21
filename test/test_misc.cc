@@ -82,11 +82,26 @@ public:
 	    BOOST_REQUIRE(!starts_with(nomatch, seed));
 	}
     }
+
+    void test_clean_path()
+    {
+	using std::string;
+	using boost::filesystem::path;
+	path p = clean_path("a/../b");
+	BOOST_REQUIRE_EQUAL("b", p.native_file_string());
+	p = clean_path("a//b");
+	BOOST_REQUIRE_EQUAL("a/b", p.native_file_string());
+	p = clean_path("a/./b");
+	BOOST_REQUIRE_EQUAL("a/b", p.native_file_string());
+	p = clean_path("//a/./b//");
+	BOOST_REQUIRE_EQUAL("/a/b", p.native_file_string());
+    }
 };
 
 void test_misc(test_suite* ts) {
     boost::shared_ptr<TC_Misc> instance( new TC_Misc );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Misc::test_autoflag, instance ) );
     ts->add( BOOST_CLASS_TEST_CASE( &TC_Misc::test_stringlist, instance ) );
+    ts->add( BOOST_CLASS_TEST_CASE( &TC_Misc::test_clean_path, instance ) );
 }
 

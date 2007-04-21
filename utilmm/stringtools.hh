@@ -2,6 +2,8 @@
 #include <list>
 #include <ctype.h>
 
+#include <boost/filesystem/path.hpp>
+
 namespace utilmm {
     typedef std::list<std::string> stringlist;
 
@@ -58,6 +60,20 @@ namespace utilmm {
 
     inline bool starts_with(std::string const& str, std::string const& start)
     { return std::string(str, 0, start.length()) == start; }
+
+    inline boost::filesystem::path clean_path(std::string str)
+    {
+	using std::string;
+	string::size_type i = str.find("//");
+	while (i < str.length())
+	{
+	    str = str.erase(i, 1);
+	    i   = str.find("//");
+	}
+
+	boost::filesystem::path p(str);
+	return p.normalize();
+    }
 }
 
 
