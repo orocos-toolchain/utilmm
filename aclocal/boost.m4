@@ -81,19 +81,22 @@ AC_DEFUN([CLBS_BOOST_SUBLIB],
     
   if test "$has_working_$1" = "yes" && test -n "$2"; then
     AC_MSG_CHECKING([for the Boost/$1 library])
-    LDFLAGS="$BOOST_LDFLAGS ifelse([$2], [], [], -lboost_$2) $PTHREAD_LIBS $LDFLAGS"
-    AC_LINK_IFELSE(
-    [
-      #include <$3>
+    for libname in $2 $2-mt; do
+	LDFLAGS="$BOOST_LDFLAGS ifelse([$2], [], [], -lboost_$libname) $PTHREAD_LIBS $clbs_sv_$1_LDFLAGS"
+	AC_LINK_IFELSE(
+	[
+	  #include <$3>
 
-      int main()
-      {
-        $4 test;
-      }
-    ], 
-    [AC_MSG_RESULT([yes])], 
-    [has_working_$1=no
-     AC_MSG_RESULT([no])])
+	  int main()
+	  {
+	    $4 test;
+	  }
+	], 
+	[has_working_$1=yes
+	AC_MSG_RESULT([yes])
+	break], 
+	[has_working_$1=no])
+    done
   fi
 
   CPPFLAGS="$clbs_sv_$1_CPPFLAGS"
@@ -101,7 +104,7 @@ AC_DEFUN([CLBS_BOOST_SUBLIB],
  
   if test "$has_working_$1" != "no"; then
     ifelse([$5], , , $5)
-    CLBS_BOOST_SUBLIB_DEFINE($1, translit($1, 'a-z', 'A-Z'), [$2])
+    CLBS_BOOST_SUBLIB_DEFINE($1, translit($1, 'a-z', 'A-Z'), [$libname])
   ifelse([$6], [], [], [
   else 
     $6

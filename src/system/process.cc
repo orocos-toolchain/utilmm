@@ -271,16 +271,7 @@ void process::process_child_error(int fd)
         return;
     read(fd, &error, sizeof(error));
 
-    if (error_type == CHDIR_ERROR)
-    {
-        switch(error) 
-        {
-            case ENOMEM:  throw filesystem_error("chdir", m_wdir, out_of_memory_error);
-            case ENOTDIR: throw filesystem_error("chdir", m_wdir, not_directory_error);
-            default: throw filesystem_error("chdir", m_wdir, security_error);
-        }
-    }
-    else throw unix_error(error);
+    throw unix_error(error);
 }
 
 void process::send_child_error(int fd, int error_type)

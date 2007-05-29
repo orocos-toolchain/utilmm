@@ -1,2 +1,5 @@
+== Version 0.2.3
+* be compatible with boost 1.34
+
 == Version 0.2.2
 First public release
