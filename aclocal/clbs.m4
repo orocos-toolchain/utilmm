@@ -1,5 +1,5 @@
-dnl $Rev: 1401 $
-dnl $Id: clbs.m4 1401 2006-02-09 13:22:04Z sjoyeux $
+dnl $Rev: 1616 $
+dnl $Id: clbs.m4 1616 2007-06-20 20:46:12Z sjoyeux $
 
 AC_DEFUN([FPY_DIRNAME_EXPR],
          [[expr ".$1" : '\(\.\)[^/]*$' \| "x$1" : 'x\(.*\)/[^/]*$']])
@@ -27,19 +27,20 @@ AC_DEFUN([CLBS_GET_USRLIBDIR], [
 
 AC_DEFUN([CLBS_TEST_SUPPORT], [
      AC_REQUIRE([CLBS_BOOST_TEST])
-
      AC_ARG_ENABLE(test, 
-	AC_HELP_STRING([--disable-test], [do not build test [autodetected]]),
-	[HAS_TEST_SUPPORT=$enableval], [HAS_TEST_SUPPORT=$HAS_BOOST_TEST])
+	AC_HELP_STRING([--disable-test], [enable test suite (default=yes if boost/test is present)]),
+	[HAS_TEST_SUPPORT=$enableval],[HAS_TEST_SUPPORT=$HAVE_BOOST_TEST])
+
      AC_SUBST(HAS_TEST_SUPPORT)
      AS_IF([test "x$HAS_TEST_SUPPORT" = "xyes"],
-        [AC_MSG_NOTICE([Enabling test support])
+        [AC_MSG_NOTICE([test support enabled])
          CLBS_TEST_CPPFLAGS=$BOOST_TEST_CPPFLAGS
          CLBS_TEST_LDFLAGS=$BOOST_TEST_LDFLAGS
          AC_SUBST(CLBS_TEST_CPPFLAGS)
          AC_SUBST(CLBS_TEST_LDFLAGS)
          $1],
-         [$2])
+         [AC_MSG_NOTICE([test support disabled])
+	 $2])
 ])
 
 AC_DEFUN([CLBS_PCH_SUPPORT], [
@@ -47,7 +48,7 @@ AC_ARG_WITH(pch,
            AC_HELP_STRING([--with-pch=header.h], [use precompiled headers]),
                 [pch=$withval],[pch=no])
 if ! test "x$pch" = "xno"; then
-    USE_PCH=1
+    USE_PCH=yes
     PCH_HEADER=$pch
 
     AC_MSG_RESULT(using $pch as precompiled header)
