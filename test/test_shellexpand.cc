@@ -1,3 +1,5 @@
+#include <boost/test/auto_unit_test.hpp>
+
 #include "testsuite.hh"
 #include <utilmm/configfile/shell_expand.hh>
 
@@ -26,14 +28,10 @@ static std::string get_home()
         
 }
 
-void test_expansion()
+BOOST_AUTO_TEST_CASE( test_expansion )
 {
     std::string home = get_home();
     std::string expanded = utilmm::shell_expand("$HOME");
     BOOST_REQUIRE(home == expanded);
-}
-
-void test_shellexpand(test_suite* ts ) {
-    ts->add(BOOST_TEST_CASE(&test_expansion));
 }
 

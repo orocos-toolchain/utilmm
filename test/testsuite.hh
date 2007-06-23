@@ -22,12 +22,5 @@ inline void set_log_threshold_level(log_level lev)
 { unit_test_log.set_threshold_level(lev); }
 #endif
 
-void test_pkgconfig( test_suite*);
-void test_shellexpand( test_suite* );
-void test_process( test_suite* );
-void test_system(test_suite* ts);
-void test_configfile(test_suite* ts);
-void test_misc(test_suite* ts);
-void test_undirected_graph(test_suite* ts);
 #endif
 
