@@ -1,0 +1,36 @@
+== Installing Utilmm ==
+
+Note for Debian users: a quick install guide is included at the
+bottom of this file
+
+=== Dependencies and installation instructions
+To build the library, you need the following:
+ * the boost libraries, including the following:
+    boost/thread
+    boost/regex
+    boost/filesystem
+    boost/graph
+    boost/test
+
+ * autoconf and automake
+
+When all these dependencies are installed, run
+  ./autogen
+  ./configure
+  make
+
+And, as root,
+  make install
+
+=== Quick Debian installation guide
+Run as root
+  apt-get install libboost-dev libboost-filesystem-dev libboost-thread-dev libboost-regex-dev libboost-graph-dev autoconf automake
+
+Run as a normal user
+  ./autogen
+  ./configure
+  make
+
+Run as root
+  make install
+
