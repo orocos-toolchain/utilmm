@@ -3,6 +3,10 @@
 Note for Debian users: a quick install guide is included at the
 bottom of this file
 
+=== Getting the sources
+
+  darcs get --set-scripts-executable http://www.laas.fr/~sjoyeux/darcs/utilmm
+
 === Dependencies and installation instructions
 To build the library, you need the following:
  * the boost libraries, including the following:
@@ -10,12 +14,11 @@ To build the library, you need the following:
     boost/regex
     boost/filesystem
     boost/graph
-    boost/test
 
- * autoconf and automake
+ * libtool, autoconf and automake
 
 When all these dependencies are installed, run
-  ./autogen
+  ./autogen.sh
   ./configure
   make
 
@@ -24,10 +27,10 @@ And, as root,
 
 === Quick Debian installation guide
 Run as root
-  apt-get install libboost-dev libboost-filesystem-dev libboost-thread-dev libboost-regex-dev libboost-graph-dev autoconf automake
+  apt-get install build-essential libtool libboost-dev libboost-filesystem-dev libboost-thread-dev libboost-regex-dev libboost-graph-dev autoconf automake
 
 Run as a normal user
-  ./autogen
+  ./autogen.sh
   ./configure
   make
 
