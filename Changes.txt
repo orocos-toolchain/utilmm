@@ -1,3 +1,6 @@
+== Version 0.2.4
+* move the build system to CMake
+
 == Version 0.2.3
 * be compatible with boost 1.34
 

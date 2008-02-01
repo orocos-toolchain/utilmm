@@ -37,3 +37,7 @@
 (^|/)autom4te.cache($|/)
 ^configure
 ^aclocal.m4
+CMakeFiles
+CMakeCache.txt
+cmake_install
+install_manifest
