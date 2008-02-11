@@ -1,8 +1,9 @@
 project(Util--)
 
-set (CMAKE_MODULE_PATH "cmake")
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 FIND_PACKAGE(Boost REQUIRED COMPONENTS graph filesystem thread regex)
 
+include_directories(${CMAKE_BINARY_DIR}) # to get cmake-generated utilmm/config/config.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${Boost_INCLUDE_DIR})
 add_subdirectory (src)
