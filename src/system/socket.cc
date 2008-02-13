@@ -48,7 +48,7 @@ namespace utilmm
     {
 	m_fd = ::socket(base_socket::to_unix(domain), base_socket::to_unix(type), 0);
 	if (m_fd == -1)
-	    throw unix_error("cannot allocate the socket FD");
+	    throw unix_error("cannot open the socket");
 	m_domain = domain;
 	m_type = type;
     }
