@@ -87,5 +87,5 @@ BOOST_AUTO_TEST_CASE( test_clean_path )
     p = clean_path("a/./b");
     BOOST_REQUIRE_EQUAL("a/b", p.native_file_string());
     p = clean_path("//a/./b//");
-    BOOST_REQUIRE_EQUAL("/a/b", p.native_file_string());
+    BOOST_REQUIRE_EQUAL("/a/b/.", p.native_file_string());
 }
