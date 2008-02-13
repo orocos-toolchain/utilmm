@@ -13,8 +13,17 @@ TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 CONFIGURE_FILE(utilmm/config/config.h.in utilmm/config/config.h)
 CONFIGURE_FILE(utilmm.pc.in utilmm.pc @ONLY)
 
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/utilmm.pc DESTINATION lib/pkgconfig)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/utilmm.pc 
+    DESTINATION lib/pkgconfig)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/utilmm/config/config.h 
+    DESTINATION include/utilmm/config)
 INSTALL(DIRECTORY utilmm/ DESTINATION include/utilmm
     PATTERN "*.in" EXCLUDE)
 
+INCLUDE(CTest)
+FIND_PACKAGE(Boost COMPONENTS unit_test_framework)
+IF (Boost_UNIT_TEST_FRAMEWORK_FOUND)
+    MESSAGE(STATUS "boost/test found ... building test suite")
+    ADD_SUBDIRECTORY(test)
+ENDIF(Boost_UNIT_TEST_FRAMEWORK_FOUND)
 
