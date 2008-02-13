@@ -5,9 +5,11 @@
 #include <utilmm/system/socket.hh>
 #include <utilmm/system/endian.hh>
 #include <boost/filesystem/operations.hpp>
+#include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <errno.h>
 using namespace utilmm;
+using std::string;
 
 BOOST_AUTO_TEST_CASE( test_swap_endian )
 {
@@ -59,15 +61,22 @@ BOOST_AUTO_TEST_CASE( test_tempfile )
 
 BOOST_AUTO_TEST_CASE( test_socket )
 {
+    // Allocate a random port in between 30000 and 60000. This is not perfect,
+    // but helps mitigate some issues with TCP WAIT_STATE, and the possibility
+    // of having a server on the chosen port
+    srand(time(0));
+    std::string port = boost::lexical_cast<std::string>(static_cast<long long>(rand()) * 30000 / RAND_MAX + 30000);
+    std::string other_port = boost::lexical_cast<std::string>(static_cast<long long>(rand()) * 30000 / RAND_MAX + 30000);
+
     // First create a IP server socket
-    server_socket server(server_socket::Inet, server_socket::Stream, "0.0.0.0:4672");
+    server_socket server(server_socket::Inet, server_socket::Stream, string("0.0.0.0:") + port);
     // This should throw since the port is already used
-    BOOST_REQUIRE_THROW(server_socket another_server(server_socket::Inet, server_socket::Stream, "0.0.0.0:4672"), unix_error);
+    BOOST_REQUIRE_THROW(server_socket another_server(server_socket::Inet, server_socket::Stream, string("0.0.0.0:") + port), unix_error);
 
     // Create a socket and connect it to the server
-    socket client(socket::Inet, socket::Stream, "localhost:4672");
+    socket client(socket::Inet, socket::Stream, "localhost:" + port);
     // This should throw since there is nothing on the port
-    BOOST_REQUIRE_THROW(socket another_client(socket::Inet, socket::Stream, "127.0.0.1:6472"), unix_error);
+    BOOST_REQUIRE_THROW(socket another_client(socket::Inet, socket::Stream, string("127.0.0.1:") + other_port), unix_error);
 
     server.wait();
     BOOST_REQUIRE(server.try_wait());
