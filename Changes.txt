@@ -1,4 +1,4 @@
-== Version 0.2.4
+== Version 1.0rc1
 * move the build system to CMake
 
 == Version 0.2.3

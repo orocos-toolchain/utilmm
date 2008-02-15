@@ -5,7 +5,7 @@ bottom of this file
 
 === Getting the sources
 
-  darcs get --set-scripts-executable http://www.laas.fr/~sjoyeux/darcs/utilmm
+  git clone http://www.laas.fr/~sjoyeux/git/utilmm.git
 
 === Dependencies and installation instructions
 To build the library, you need the following:
@@ -15,24 +15,28 @@ To build the library, you need the following:
     boost/filesystem
     boost/graph
 
- * libtool, autoconf and automake
+ * cmake
 
 When all these dependencies are installed, run
-  ./autogen.sh
-  ./configure
+  mkdir build
+  cd build
+  cmake ..
   make
+  make doc
 
 And, as root,
   make install
 
 === Quick Debian installation guide
 Run as root
-  apt-get install build-essential libtool libboost-dev libboost-filesystem-dev libboost-thread-dev libboost-regex-dev libboost-graph-dev autoconf automake
+  apt-get install build-essential libtool libboost-dev libboost-filesystem-dev libboost-thread-dev libboost-regex-dev libboost-graph-dev cmake
 
 Run as a normal user
-  ./autogen.sh
-  ./configure
+  mkdir build
+  cd build
+  cmake ..
   make
+  make doc
 
 Run as root
   make install

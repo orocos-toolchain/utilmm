@@ -1,4 +1,5 @@
 project(Util--)
+SET(PROJECT_VERSION 1.0rc1)
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 FIND_PACKAGE(Boost REQUIRED COMPONENTS graph filesystem thread regex)
