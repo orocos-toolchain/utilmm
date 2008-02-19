@@ -6,6 +6,10 @@
 
 namespace utilmm
 {
+    /** This namespace holds various tools to convert between little and big endian 
+     *
+     * @ingroup system
+     */
     namespace endian
     {
 	namespace details {
@@ -55,7 +59,7 @@ namespace utilmm
 
 #ifdef WORDS_BIGENDIAN
 	/** Converts \c source, which is in native byte order, into big endian and 
-	 * saves the result into \dest */
+	 * saves the result into \c dest */
 	template<typename S>
 	inline void to_big(const S source, S& dest) { dest = source; }
 	/** Converts \c source, which is in native byte order, into big endian and 
@@ -63,7 +67,7 @@ namespace utilmm
 	template<typename S>
 	inline S to_big(const S source) { return source; }
 	/** Converts \c source, which is in native byte order, into little endian and 
-	 * saves the result into \dest */
+	 * saves the result into \c dest */
 	template<typename S>
 	inline void to_little(const S source, S& dest) { swap<S>(source, dest); }
 	/** Converts \c source, which is in native byte order, into little endian and 
@@ -82,7 +86,7 @@ namespace utilmm
 #endif
 
 	/** Converts \c source, which is in network byte order, into native byte order and 
-	 * saves the result into \dest */
+	 * saves the result into \c dest */
 	template<typename S>
 	inline void from_network(const S source, S& dest) { to_network(source, dest); }
 	/** Converts \c source, which is in network byte order, into native byte order and
@@ -90,7 +94,7 @@ namespace utilmm
 	template<typename S>
 	inline S from_network(const S source) { return to_network(source); }
 	/** Converts \c source, which is in little endian, into native byte order and 
-	 * saves the result into \dest */
+	 * saves the result into \c dest */
 	template<typename S>
 	inline void from_little(const S source, S& dest) { to_little(source, dest); }
 	/** Converts \c source, which is in little endian, into native byte order and
@@ -98,7 +102,7 @@ namespace utilmm
 	template<typename S>
 	inline S from_little(const S source) { return to_little(source); }
 	/** Converts \c source, which is in big endian, into native byte order and 
-	 * saves the result into \dest */
+	 * saves the result into \c dest */
 	template<typename S>
 	inline void from_big(const S source, S& dest) { to_big(source, dest); }
 	/** Converts \c source, which is in big endian, into native byte order and

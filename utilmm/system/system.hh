@@ -6,6 +6,11 @@
 
 namespace utilmm
 {
+    /** Exception raised when a standard C call returns an error. It is based
+     * on the errno error report mechanism.
+     *
+     * @ingroup system
+     */
     class unix_error : public std::exception
     {
 	char m_desc[512];
@@ -25,6 +30,12 @@ namespace utilmm
         int m_error;
     };
     
+    /** The C++ guard mechanism applied to file descriptors: when destroyed, an
+     * auto_close object releases the file descriptor it has been given at
+     * construction.
+     *
+     * @ingroup system
+     */
     class auto_close : boost::noncopyable
     {
     public:
@@ -33,12 +44,32 @@ namespace utilmm
         explicit auto_close(FILE* stream);
         ~auto_close();
         
+	/** Access to the file descriptor. 
+	 *
+	 * @exception std::bad_cast Raised if the required type is not the
+	 * right file descriptor type (i.e. if handle<FILE> is calledd on a
+	 * auto_close object created with an 'int' fd)
+	 */
         template<typename T> T handle()  const;
             
+	/** Close the file descriptor right away */
         void  close();
+
+	/** First, close the current defined file descriptor and then sets it
+	 * to a new one. Calling reset(-1) is equivalent to calling close()
+	 * directly.
+	 */
         void  reset(int fd);
+
+	/** First, close the current defined file descriptor and then sets it
+	 * to a new one. Calling reset(-1) is equivalent to calling close()
+	 * directly.
+	 */
         void  reset(FILE* stream);
 
+	/** Disassociates this object and the file descriptor associated with
+	 * it \b without closing the file descriptor
+	 */
         void  detach();
 
     private:
@@ -51,7 +82,10 @@ namespace utilmm
         int   auto_close::handle<int>()   const;
 
     /** A temporary file. It is created on construction and
-     * removed on destruction */
+     * removed on destruction 
+     *
+     * @ingroup system
+     */
     class tempfile : boost::noncopyable
     {
         boost::filesystem::path m_path;
@@ -110,4 +144,11 @@ namespace utilmm
 }
 
 #endif
+
+/** @defgroup system OS-related tools
+ * 
+ * This system defines OS-related tools: endianness changing operators,
+ * temporary files, sockets. These tools are tested on Linux but should be
+ * portable to all POSIX-compliant OSes.
+ */ 
 
