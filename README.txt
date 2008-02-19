@@ -49,3 +49,5 @@ Then, as root,
 
 Alternatively, you can add the \c -DCMAKE_INSTALL_PREFIX=path/to/the/installation/target option to cmake
 to install the files in a custom directory
+
+*/
