@@ -10,7 +10,7 @@ LICENSE.txt and LICENSE.fr.txt, provided with the sources, for the complete term
 
 \section Installation
 
-\subsection Getting the sources
+\subsection Getting the source code
 Releases are available on SourceForge: <a
 href="http://sourceforge.net/projects/utilmm/">http://sourceforge.net/projects/utilmm/</a>.
 You can access this project page from anywhere in the documentation by clicking
