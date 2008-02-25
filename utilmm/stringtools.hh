@@ -1,3 +1,6 @@
+#ifndef UTILMM_STRINGTOOLS_HH
+#define UTILMM_STRINGTOOLS_HH
+
 #include <string>
 #include <list>
 #include <ctype.h>
@@ -75,5 +78,5 @@ namespace utilmm {
 	return p.normalize();
     }
 }
-
+#endif
 
