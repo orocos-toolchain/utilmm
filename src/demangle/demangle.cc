@@ -5,6 +5,7 @@
 
 #if 1 // This will be replaced by a test checking <cxxabi.h>
 # include <cxxabi.h> 
+#include <cstdlib>
 
 std::string utilmm::demangle(char const *name) {
   int status;

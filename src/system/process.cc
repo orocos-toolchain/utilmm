@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <cstring>
 
 #include <iostream>
 #include <boost/filesystem/exception.hpp>
