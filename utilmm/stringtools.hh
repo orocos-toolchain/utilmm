@@ -6,6 +6,7 @@
 #include <ctype.h>
 
 #include <boost/filesystem/path.hpp>
+#include <boost/lexical_cast.hpp>
 
 namespace utilmm {
     typedef std::list<std::string> stringlist;
@@ -48,6 +49,15 @@ namespace utilmm {
         for (++it; it != l.end(); ++it)
             s += sep + *it;
         return s;
+    }
+
+    template<typename T>
+    inline std::string join(std::list<T> const& l, std::string const& sep = " ")
+    {
+        stringlist strl;
+        for (typename std::template list<T>::const_iterator it = l.begin(); it != l.end(); ++it)
+            strl.push_back(boost::lexical_cast<std::string>(*it));
+        return join(strl, sep);
     }
 
     inline std::string upcase(std::string const& s)
