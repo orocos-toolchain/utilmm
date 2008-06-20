@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE( test_cmdline_option_parsing )
 void check_cmdline_properties(command_line& cmdline)
 {
     config_set config;
-    char* valid_argv[] = { "--required=false", "-I", "bla", "--include=test", "--quiet", "--verbose", "bla.cpp" };
+    const char* valid_argv[] = { "--required=false", "-I", "bla", "--include=test", "--quiet", "--verbose", "bla.cpp" };
     
     cmdline.parse(7, valid_argv, config);
     BOOST_REQUIRE_EQUAL(1UL, cmdline.remaining().size() );
@@ -185,19 +185,19 @@ BOOST_AUTO_TEST_CASE( test_commandline )
 
     config_set config;
 
-    char* missing_required[] = { "--quiet" };
+    char const* missing_required[] = { "--quiet" };
     BOOST_REQUIRE_THROW( cmdline.parse(1, missing_required, config), commandline_error );
 
-    char* missing_argument[] = { "--required=true", "--include" };
+    char const* missing_argument[] = { "--required=true", "--include" };
     BOOST_REQUIRE_THROW( cmdline.parse(2, missing_argument, config), commandline_error );
 
-    char* missing_argument_short[] = { "--required=true", "-I", "--quiet" };
+    char const* missing_argument_short[] = { "--required=true", "-I", "--quiet" };
     BOOST_REQUIRE_THROW( cmdline.parse(3, missing_argument_short, config), commandline_error );
 
-    char* invalid_argument_type[] = { "--required=true", "--verbose=bla" };
+    char const* invalid_argument_type[] = { "--required=true", "--verbose=bla" };
     BOOST_REQUIRE_THROW( cmdline.parse(2, invalid_argument_type, config), commandline_error );
 
-    char* overriding_default_value[] = { "--required=true", "--default-value=20" };
+    char const* overriding_default_value[] = { "--required=true", "--default-value=20" };
     BOOST_REQUIRE_NO_THROW( cmdline.parse(2, overriding_default_value, config) );
     BOOST_REQUIRE_EQUAL(20, config.get<int>("defval"));
 }

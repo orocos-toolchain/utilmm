@@ -174,7 +174,7 @@ namespace utilmm
             config.set(optdesc.getConfigKey(), value);
     }
 
-    int command_line::option_match(config_set& config, cmdline_option const& opt, int argc, char* const* argv, int i)
+    int command_line::option_match(config_set& config, cmdline_option const& opt, int argc, char const* const* argv, int i)
     {
 	if (argv[i] == "-" + opt.getShort())
 	{
@@ -210,7 +210,7 @@ namespace utilmm
 	return i + 1;
     }
 
-    void command_line::parse(int argc, char* const argv[], config_set& config)
+    void command_line::parse(int argc, char const* const argv[], config_set& config)
     {
         std::list<string> remains;
 	

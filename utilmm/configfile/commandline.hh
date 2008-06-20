@@ -185,7 +185,7 @@ namespace utilmm
 	 *
 	 * @throws commandline_error
          */
-        void parse(int argc, char* const argv[], config_set& config);
+        void parse(int argc, char const* const argv[], config_set& config);
 
         /** Remaining command line options
          * After all options are matched, and if no error has occured,
@@ -202,7 +202,7 @@ namespace utilmm
 
     private:
         void add_argument(config_set& config, cmdline_option const& optdesc, std::string const& value);
-	int option_match(config_set& config, cmdline_option const& opt, int argc, char* const* argv, int i);
+	int option_match(config_set& config, cmdline_option const& opt, int argc, char const* const* argv, int i);
 
 	std::string m_banner;
         Options    m_options;

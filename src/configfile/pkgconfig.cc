@@ -34,11 +34,11 @@ string pkgconfig::get(string const& varname, string const& defval) const
     catch(not_found) { return defval; }
 }
 
-static char* compiler_flags[] = { "--cflags", "--cflags-only-I", "--cflags-only-other" };
+static const char* const compiler_flags[] = { "--cflags", "--cflags-only-I", "--cflags-only-other" };
 string pkgconfig::compiler(Modes mode) const
 { return run(compiler_flags[mode]); }
 
-static char* linker_flags[] = { "--libs", "--libs-only-L", "--libs-only-other", "--static", "--libs-only-l",  };
+static const char* const linker_flags[] = { "--libs", "--libs-only-L", "--libs-only-other", "--static", "--libs-only-l",  };
 string pkgconfig::linker(Modes mode) const
 { return run(linker_flags[mode]); }
 
