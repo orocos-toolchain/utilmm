@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 2.4)
+
 project(Util--)
 SET(PROJECT_VERSION 1.0rc1)
 
