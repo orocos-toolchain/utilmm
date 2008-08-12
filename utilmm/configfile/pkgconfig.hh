@@ -40,6 +40,8 @@ namespace utilmm
         string compiler(Modes mode = pkgconfig::All) const;
         /** Get link flags for the given mode */
         string linker(Modes mode = pkgconfig::All) const;
+
+        static std::list<string> packages();
         
     private:
         /** The package name */
@@ -47,7 +49,7 @@ namespace utilmm
 
         /** Run the given process object and returns its standard output */
         static string run(process& prs);
-        /** Get the value returned by pkgconfig with the given argument */
+        /** Get the value returned by pkgconfig with the given argument applied to the current package*/
         string run(string const& argument) const;
      };
 }

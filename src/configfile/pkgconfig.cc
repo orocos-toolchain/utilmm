@@ -2,9 +2,11 @@
 #include <utilmm/system/process.hh>
 #include <utilmm/configfile/pkgconfig.hh>
 #include <utilmm/configfile/exceptions.hh>
+#include <utilmm/stringtools.hh>
 
 using namespace utilmm;
 using std::string;
+using std::list;
 
 pkgconfig::pkgconfig(string const& name_)
     : m_name(name_)
@@ -14,6 +16,29 @@ pkgconfig::pkgconfig(string const& name_)
 }
 
 pkgconfig::~pkgconfig() {}
+
+std::list<string> pkgconfig::packages()
+{
+    process prs;
+    prs << "pkg-config" << "--list-all";
+    string output = run(prs);
+    // strip output
+    string::size_type first = output.find_first_not_of(" \t\n");
+    if (first == string::npos) output = string();
+    string::size_type last  = output.find_last_not_of(" \t\n");
+    if (last == string::npos) output = string(output, first);
+
+    string out = string(output, first, last - first + 1);
+    std::list<string> lines = split(out, "\n");
+    // remove the package descriptions
+    for (list<string>::iterator it = lines.begin(); it != lines.end(); ++it)
+    {
+        list<string> fields = split(*it, " ");
+        *it = fields.front();
+    }
+
+    return lines;
+}
 
 string pkgconfig::name() const { return m_name; }
 string pkgconfig::version() const { return run("--modversion"); }
