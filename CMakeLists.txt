@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.4)
 
 project(Util--)
 SET(PROJECT_VERSION 1.0rc1)
+SET(API_VERSION 1)
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 FIND_PACKAGE(Boost COMPONENTS unit_test_framework)

@@ -1,4 +1,3 @@
-
 add_library(utilmm SHARED
     configfile/commandline.cc
     configfile/configfile.cc
@@ -12,6 +11,10 @@ add_library(utilmm SHARED
     system/process.cc
     system/socket.cc
     system/system.cc)
+
+set_target_properties(utilmm PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${API_VERSION})
 
 target_link_libraries(utilmm ${Boost_REGEX_LIBRARY})
 target_link_libraries(utilmm ${Boost_THREAD_LIBRARY})
