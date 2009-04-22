@@ -25,10 +25,13 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/utilmm/config/config.h
 INSTALL(DIRECTORY utilmm/ DESTINATION include/utilmm
     PATTERN "*.in" EXCLUDE)
 
-INCLUDE(CTest)
-IF (Boost_UNIT_TEST_FRAMEWORK_FOUND)
+INCLUDE(CMakeDependentOption)
+CMAKE_DEPENDENT_OPTION(ENABLE_TESTS "if tests should be built" ON
+    "NOT Boost_UNIT_TEST_FRAMEWORK_FOUND" OFF)
+IF (ENABLE_TESTS)
+    INCLUDE(CTest)
     MESSAGE(STATUS "boost/test found ... building test suite")
     ADD_SUBDIRECTORY(test)
-ENDIF(Boost_UNIT_TEST_FRAMEWORK_FOUND)
+ENDIF(ENABLE_TESTS)
 
 INCLUDE(GenerateDoxygenDoc)
