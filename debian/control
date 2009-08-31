@@ -1,0 +1,35 @@
+Source: utilmm
+Section: libdevel
+Priority: extra
+Maintainer: Sylvain Joyeux <sylvain.joyeux@m4x.org>
+Uploaders: Sylvain Joyeux <sylvain.joyeux@dfki.de>
+Build-Depends: cdbs, debhelper (>= 7), cmake, libboost-dev | libboost1.38-dev,
+ libboost-filesystem-dev | libboost-filesystem1.38-dev,
+ libboost-regex-dev | libboost-regex1.38-dev,
+ libboost-thread-dev | libboost-thread1.38-dev
+Standards-Version: 3.8.3
+Homepage: http://utilmm.sourceforge.net
+
+Package: libutilmm1
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: a C++ toolkit
+ Utilmm provides basic C++ tools that are generally useful and available
+ neither in standard C++ nor in boost.
+
+Package: libutilmm1-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libutilmm1 (= ${binary:Version}), libboost-dev | libboost1.38-dev
+Description: a C++ toolkit (development files)
+ Utilmm provides basic C++ tools that are generally useful and available
+ neither in standard C++ nor in boost.
+
+Package: libutilmm-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}
+Description: a C++ toolkit (documentation)
+ Documentation for the Util-- library
+ .
+ See libutilmm1 package for more information
+

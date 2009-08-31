@@ -1,0 +1,22 @@
+This package was debianized by sylvain <sylvain.joyeux@dfki.de> on
+Wed, 22 Apr 2009 09:32:01 +0200.
+
+Copyright:
+
+    2003-2008 LAAS/CNRS <openrobots@laas.fr>
+    2005-2008 DGA
+    2008-2009 DFKI <robotik@dfki-bremen.de>
+
+
+License:
+
+    This package is licensed under the CeciLL-B license, which is a BSD-like
+    license. See attached LICENSE.txt and LICENSE.fr.txt for details.
+
+The Debian packaging is:
+
+    Copyright (C) 2009 sylvain <sylvain.joyeux@dfki.de>
+
+and is licensed under the GPL version 3, 
+see `/usr/share/common-licenses/GPL-3'.
+
