@@ -9,6 +9,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <vector>
+#include <stdio.h>
 
 using namespace utilmm;
 

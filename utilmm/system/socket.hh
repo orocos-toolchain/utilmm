@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <sys/types.h>
+#include <stdint.h>
 
 namespace utilmm
 {

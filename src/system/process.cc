@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <cstring>
+#include <stdio.h>
 
 #include <iostream>
 #include <boost/filesystem/exception.hpp>
