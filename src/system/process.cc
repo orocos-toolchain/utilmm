@@ -105,10 +105,13 @@ process::process()
     register_process(this);
 }
 process::~process()
-{ 
+{
     deregister_process(this);
-    signal(); 
-    wait(true);
+    if (m_running)
+    {
+        signal(); 
+        wait(true);
+    }
 }
 
 boost::filesystem::path process::workdir() const { return m_wdir; }
@@ -306,7 +309,7 @@ bool process::wait(bool hang)
 {
     int status;
 
-    pid_t wait_ret;
+    pid_t wait_ret = -1;
     do
     { wait_ret = waitpid(m_pid, &status, (hang ? 0 : WNOHANG) ); }
     while (wait_ret == -1 && errno == EINTR);
