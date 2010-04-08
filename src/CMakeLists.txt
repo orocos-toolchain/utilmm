@@ -14,7 +14,8 @@ add_library(utilmm SHARED
 
 set_target_properties(utilmm PROPERTIES
     VERSION ${PROJECT_VERSION}
-    SOVERSION ${API_VERSION})
+    SOVERSION ${API_VERSION}
+    INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/lib)
 
 target_link_libraries(utilmm ${Boost_REGEX_LIBRARY})
 target_link_libraries(utilmm ${Boost_THREAD_LIBRARY})
