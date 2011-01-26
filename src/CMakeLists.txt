@@ -4,6 +4,7 @@ add_library(utilmm SHARED
     configfile/configset.cc
     configfile/pkgconfig.cc
     configfile/shell_expand.cc
+    configsearch/configuration_finder.cc
     demangle/demangle.cc
     memory/dynamic_pool.cc
     singleton/dummy.cc
