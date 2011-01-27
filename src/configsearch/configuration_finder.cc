@@ -78,5 +78,28 @@ std::string ConfigurationFinder::search(const std::string& file, const std::vect
 	return result;
 }
 
+std::string ConfigurationFinder::findSystemConfig(const std::string& file, const std::string& systemId)
+{
+	std::vector<std::string> result;
+	boost::algorithm::split(result, systemId, boost::algorithm::is_any_of("_"));
+
+	if(result.size() != 2)
+	{
+		fprintf(stderr, "WARNING: ConfigurationFinder: Invalid systemConfig provided\n"); 
+		fprintf(stderr, "ConfigurationFinder: searching in basedir %s\n", systemId.c_str()); 
+		
+	}
+
+	boost::filesystem::path baseDir(result[0]);
+	boost::filesystem::path systemIdDir = operator/(baseDir, result[1]);
+	std::string systemIdConfig = find(file,systemIdDir.string() );
+	std::string baseConfig = find(file, baseDir.string());
+
+	if(systemIdConfig != "")
+		return systemIdConfig;
+	
+	return baseConfig;
+}
+
 } // end namespace rock
 
