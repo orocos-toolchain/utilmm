@@ -10,4 +10,7 @@
   <license>CeCILL-B (BSD-like)</license>
 
   <rosdep name="boost" />
+  <export>
+    <cpp cflags="-I${prefix}/install/include" lflags="-L${prefix}/install/lib -lutilmm -Wl,-rpath,-L${prefix}/lib"/>
+  </export>
 </package>
