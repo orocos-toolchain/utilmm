@@ -3,6 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <boost/program_options.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/algorithm/string.hpp>
 
 namespace utilmm {
