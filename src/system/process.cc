@@ -14,6 +14,7 @@
 #include <stdio.h>
 
 #include <iostream>
+#include <boost/program_options.hpp>
 #include <boost/filesystem/exception.hpp>
 
 using std::list;
@@ -157,7 +158,11 @@ void process::killall()
 void process::erase_redirection(Stream stream) { redirect_to(stream, ""); }
 void process::redirect_to( Stream stream, boost::filesystem::path const& file)
 {
+#if BOOST_VERSION >= 104600
+    int handle = open(file.string().c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
+#else
     int handle = open(file.native_file_string().c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
+#endif
     if (handle == -1)
         throw unix_error();
 
@@ -256,7 +261,11 @@ void process::start()
 
         if (!m_wdir.empty())
         {
+#if BOOST_VERSION >= 104600
+            if (chdir(m_wdir.string().c_str()) == -1)
+#else
             if (chdir(m_wdir.native_file_string().c_str()) == -1)
+#endif
                 send_child_error(pc_comm[1], CHDIR_ERROR);
         }
             

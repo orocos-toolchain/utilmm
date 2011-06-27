@@ -2,6 +2,9 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <boost/program_options.hpp>
+#if BOOST_VERSION >= 104600
+#include <boost/filesystem.hpp>
+#endif
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -51,7 +54,6 @@ std::string ConfigurationFinder::search(const std::string& file, const std::vect
 
 	if( searchFile != "")
 	{
-	
 		// Check current directory first
 		if(boost::filesystem::exists(searchFile))
 		{
