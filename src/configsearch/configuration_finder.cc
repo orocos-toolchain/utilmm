@@ -17,10 +17,10 @@ std::string ConfigurationFinder::find( const std::string& configFile)
 
 std::string ConfigurationFinder::find( const std::string& configFile, const std::string& packagename)
 {
-	const char* configurationDir = getenv(configEnv);
+	std::string configurationDir = getenv(configEnv) ? getenv(configEnv) : "";
 
 	std::vector<std::string> searchDirectories;
-	if(configurationDir == NULL || configurationDir == "")
+	if( configurationDir.empty() )
 	{
 		fprintf(stderr, "WARNING: ConfigurationFinder: environment variable %s is not set\n", configEnv);
 	} else {
