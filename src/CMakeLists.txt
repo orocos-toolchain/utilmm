@@ -21,6 +21,9 @@ set_target_properties(utilmm PROPERTIES
 target_link_libraries(utilmm ${Boost_REGEX_LIBRARY})
 target_link_libraries(utilmm ${Boost_THREAD_LIBRARY})
 target_link_libraries(utilmm ${Boost_FILESYSTEM_LIBRARY})
+if(APPLE)
+    target_link_libraries(utilmm ${Boost_SYSTEM_LIBRARY})
+endif(APPLE)
 
 install(TARGETS utilmm
     RUNTIME DESTINATION bin
