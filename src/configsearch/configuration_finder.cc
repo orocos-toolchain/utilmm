@@ -2,6 +2,9 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <boost/program_options.hpp>
+#if BOOST_VERSION >= 104600
+#include <boost/filesystem.hpp>
+#endif
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/algorithm/string.hpp>
@@ -18,10 +21,10 @@ std::string ConfigurationFinder::find( const std::string& configFile)
 
 std::string ConfigurationFinder::find( const std::string& configFile, const std::string& packagename)
 {
-	const char* configurationDir = getenv(configEnv);
+	std::string configurationDir = getenv(configEnv) ? getenv(configEnv) : "";
 
 	std::vector<std::string> searchDirectories;
-	if(configurationDir == NULL || configurationDir == "")
+	if( configurationDir.empty() )
 	{
 		fprintf(stderr, "WARNING: ConfigurationFinder: environment variable %s is not set\n", configEnv);
 	} else {
@@ -52,7 +55,6 @@ std::string ConfigurationFinder::search(const std::string& file, const std::vect
 
 	if( searchFile != "")
 	{
-	
 		// Check current directory first
 		if(boost::filesystem::exists(searchFile))
 		{

@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <boost/version.hpp>
+#include <boost/program_options.hpp>
 #include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
