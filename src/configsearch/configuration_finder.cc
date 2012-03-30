@@ -95,8 +95,30 @@ std::string ConfigurationFinder::findSystemConfig(const std::string& file, const
 
 	boost::filesystem::path baseDir(result[0]);
 	boost::filesystem::path systemIdDir = operator/(baseDir, result[1]);
-	std::string systemIdConfig = find(file,systemIdDir.string() );
-	std::string baseConfig = find(file, baseDir.string());
+        // Split file name, when a <folder>/<file> is given  -- allows
+        // search in given directories of the systemconfiguration directory
+        // and keeps consistency with the ruby implementation 
+        boost::algorithm::split(result, file, boost::algorithm::is_any_of("/"));
+        boost::filesystem::path subdir;
+
+        std::string searchFile = result.back();
+        if(result.size() >= 2)
+        {
+            for(size_t i = 0; i < result.size() - 1; ++i)
+            {
+                subdir = operator/(subdir, result[i]);
+            }
+
+        }
+    
+        if(!subdir.string().empty())
+        {
+            systemIdDir = operator/(systemIdDir,subdir);
+            baseDir = operator/(baseDir,subdir);
+        }
+
+	std::string systemIdConfig = find(searchFile,systemIdDir.string() );
+	std::string baseConfig = find(searchFile, baseDir.string());
 
 	if(systemIdConfig != "")
 		return systemIdConfig;
