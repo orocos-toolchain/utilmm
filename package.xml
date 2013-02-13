@@ -1,0 +1,19 @@
+<package>
+  <name>utilmm</name>
+  <version>1.1.1</version>
+  <description>
+    This library is a collection of useful C++ classes
+  </description>
+  <author>Sylvain Joyeux/sylvain.joyeux@m4x.org</author>
+  <maintainer email="orocos-dev@lists.mech.kuleuven.be">OCL Development Team</maintainer>
+  <license>CeCILL-B (BSD-like)</license>
+
+  <buildtool_depend>cmake</buildtool_depend>
+  <export>
+    <build_type>
+      cmake
+    </build_type>
+  </export>
+  <build_depend>boost</build_depend>
+  <run_depend>boost</run_depend>
+</package>
