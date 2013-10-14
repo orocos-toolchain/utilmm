@@ -28,6 +28,7 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/utilmm/config/config.h
     DESTINATION include/utilmm/config)
 INSTALL(DIRECTORY utilmm/ DESTINATION include/utilmm
     PATTERN "*.in" EXCLUDE)
+INSTALL(FILES package.xml DESTINATION share/utilmm)
 
 INCLUDE(CMakeDependentOption)
 CMAKE_DEPENDENT_OPTION(ENABLE_TESTS "if tests should be built" ON
