@@ -14,7 +14,11 @@ using namespace std;
 auto_ptr<config_file> setup()
 {
     path testdir = path(__FILE__).branch_path();
+#if BOOST_VERSION >= 104600
+    return auto_ptr<config_file>(new config_file( (testdir / "test_configfile.config").string().c_str() ));
+#else
     return auto_ptr<config_file>(new config_file( (testdir / "test_configfile.config").native_file_string().c_str() ));
+#endif
 }
 #define SETUP auto_ptr<config_file> config( setup() )
 

@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE( test_tempfile )
     {
 	tempfile file("blo");
 	tmppath = file.path();
-	std::cout << tmppath.native_file_string() << std::endl;
+	std::cout << path_to_string(tmppath) << std::endl;
 	BOOST_REQUIRE(boost::filesystem::exists(tmppath));
 	file.detach();
 	BOOST_REQUIRE(boost::filesystem::exists(tmppath));

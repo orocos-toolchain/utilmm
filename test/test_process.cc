@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <stdio.h>
 
 using namespace boost::filesystem;
 using namespace utilmm;
@@ -38,7 +39,7 @@ void check_var(process& proc, std::string const& varname, std::string const& exp
     BOOST_REQUIRE(proc.exit_normal());
     BOOST_REQUIRE(!proc.exit_status());
 
-    int read_fd = open(tmpfile.path().native_file_string().c_str(), O_RDONLY);
+    int read_fd = open(path_to_string(tmpfile.path()).c_str(), O_RDONLY);
     string var_value = get_file_contents(read_fd);
     close(read_fd);
     BOOST_REQUIRE_EQUAL(var_value, expected + "\n");
@@ -60,8 +61,8 @@ BOOST_AUTO_TEST_CASE( test_run )
     
     process copy;
     copy << "cp" 
-	<< (testdir/"test_pkgconfig.pc").native_file_string()
-	<< tmpfile.path().native_file_string();
+	<< (path_to_string(testdir/"test_pkgconfig.pc"))
+	<< path_to_string(tmpfile.path());
 
     copy.start();
     copy.wait();
@@ -90,7 +91,7 @@ BOOST_AUTO_TEST_CASE( test_redirect )
     auto_close read_guard(files[0]);
     
     process cat;
-    cat << "cat" << (testdir/"test_pkgconfig.pc").native_file_string();
+    cat << "cat" << (path_to_string(testdir/"test_pkgconfig.pc"));
 
     cat.redirect_to(process::Stdout, files[1]);
     cat.start();
@@ -107,7 +108,7 @@ BOOST_AUTO_TEST_CASE( test_redirect )
     BOOST_REQUIRE(cat.exit_normal());
     BOOST_REQUIRE(!cat.exit_status());
 
-    int test_source = open( (testdir/"test_pkgconfig.pc").native_file_string().c_str(), O_RDONLY);
+    int test_source = open( path_to_string(testdir/"test_pkgconfig.pc").c_str(), O_RDONLY);
     BOOST_REQUIRE(test_source != -1);
     string source = get_file_contents(test_source);
     close(test_source);

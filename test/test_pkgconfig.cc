@@ -11,7 +11,11 @@ using namespace boost::filesystem;
 BOOST_AUTO_TEST_CASE( test_exists )
 {
     path testdir = path(__FILE__).branch_path();
+#if BOOST_VERSION >= 104600
+    setenv("PKG_CONFIG_PATH", testdir.string().c_str(), 1);
+#else
     setenv("PKG_CONFIG_PATH", testdir.native_file_string().c_str(), 1);
+#endif
 
     // Check for a non-existent pc file
     BOOST_REQUIRE_THROW(new pkgconfig("doesnotexist"), not_found);

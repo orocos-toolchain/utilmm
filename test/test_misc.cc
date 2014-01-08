@@ -81,11 +81,11 @@ BOOST_AUTO_TEST_CASE( test_clean_path )
     using std::string;
     using boost::filesystem::path;
     path p = clean_path("a/../b");
-    BOOST_REQUIRE_EQUAL("b", p.native_file_string());
+    BOOST_REQUIRE_EQUAL("b", path_to_string(p));
     p = clean_path("a//b");
-    BOOST_REQUIRE_EQUAL("a/b", p.native_file_string());
+    BOOST_REQUIRE_EQUAL("a/b", path_to_string(p));
     p = clean_path("a/./b");
-    BOOST_REQUIRE_EQUAL("a/b", p.native_file_string());
+    BOOST_REQUIRE_EQUAL("a/b", path_to_string(p));
     p = clean_path("//a/./b//");
-    BOOST_REQUIRE_EQUAL("/a/b/.", p.native_file_string());
+    BOOST_REQUIRE_EQUAL("/a/b/.", path_to_string(p));
 }

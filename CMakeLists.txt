@@ -6,11 +6,7 @@ SET(API_VERSION 1)
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 FIND_PACKAGE(Boost COMPONENTS unit_test_framework)
-if(APPLE OR WIN32)
-    FIND_PACKAGE(Boost REQUIRED graph filesystem thread regex system)
-else(APPLE OR WIN32)
-    FIND_PACKAGE(Boost REQUIRED graph filesystem thread regex)
-endif(APPLE OR WIN32)
+FIND_PACKAGE(Boost REQUIRED graph filesystem thread regex system)
 
 include_directories(${CMAKE_BINARY_DIR}) # to get cmake-generated utilmm/config/config.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -30,11 +26,10 @@ INSTALL(DIRECTORY utilmm/ DESTINATION include/utilmm
     PATTERN "*.in" EXCLUDE)
 INSTALL(FILES package.xml DESTINATION share/utilmm)
 
-INCLUDE(CMakeDependentOption)
-CMAKE_DEPENDENT_OPTION(ENABLE_TESTS "if tests should be built" ON
-    "NOT Boost_UNIT_TEST_FRAMEWORK_FOUND" OFF)
+set(ENABLE_TESTS ${Boost_UNIT_TEST_FRAMEWORK_FOUND}
+    CACHE BOOL "if tests should be built")
 IF (ENABLE_TESTS)
-    INCLUDE(CTest)
+    enable_testing()
     MESSAGE(STATUS "boost/test found ... building test suite")
     ADD_SUBDIRECTORY(test)
 ENDIF(ENABLE_TESTS)
