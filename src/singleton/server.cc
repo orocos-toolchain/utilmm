@@ -10,7 +10,7 @@ using boost::recursive_mutex;
 
 server* utilmm::singleton::server::the_instance = 0;
 
-recursive_mutex utilmm::singleton::server::sing_mtx;
+boost::recursive_mutex utilmm::singleton::server::sing_mtx;
 
 /*
  * class utilmm::singleton::server
