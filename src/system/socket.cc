@@ -64,8 +64,11 @@ namespace utilmm
 	vector<uint8_t> ret;
 	if (m_domain == Unix)
 	{
+#if __APPLE__
+	    static const unsigned int UNIX_MAX_PATH = 104; // check /usr/include/sys/un.h on Mac
+#else
 	    static const unsigned int UNIX_MAX_PATH = 108;
-
+#endif
 	    if (to.size() >= UNIX_MAX_PATH)
 		throw bad_address();
 
