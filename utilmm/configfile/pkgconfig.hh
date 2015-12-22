@@ -2,6 +2,7 @@
 #define UTILMM_CONFIGFILE_HH
 
 #include <string>
+#include <list>
 #include <utilmm/configfile/exceptions.hh>
 
 namespace utilmm

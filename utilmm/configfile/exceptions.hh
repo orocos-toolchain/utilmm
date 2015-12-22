@@ -14,7 +14,7 @@ namespace utilmm
             : file(file_) {}
         ~not_found() throw() {}
 
-        char const* what() throw() { return file.c_str(); }
+        char const* what() const throw() { return file.c_str(); }
     };
 }
 
