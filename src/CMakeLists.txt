@@ -29,6 +29,7 @@ set_target_properties(utilmm PROPERTIES
 target_link_libraries(utilmm ${Boost_REGEX_LIBRARY})
 target_link_libraries(utilmm ${Boost_THREAD_LIBRARY})
 target_link_libraries(utilmm ${Boost_FILESYSTEM_LIBRARY})
+TARGET_LINK_LIBRARIES (utilmm ${CMAKE_THREAD_LIBS_INIT} )
 if(APPLE OR WIN32)
     target_link_libraries(utilmm ${Boost_SYSTEM_LIBRARY})
 endif(APPLE OR WIN32)

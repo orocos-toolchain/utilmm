@@ -7,6 +7,7 @@ SET(API_VERSION 1)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 FIND_PACKAGE(Boost COMPONENTS unit_test_framework)
 FIND_PACKAGE(Boost REQUIRED graph filesystem thread regex system)
+FIND_PACKAGE ( Threads REQUIRED )
 
 include_directories(${CMAKE_BINARY_DIR}) # to get cmake-generated utilmm/config/config.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
