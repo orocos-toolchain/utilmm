@@ -4,6 +4,15 @@ project(Util--)
 SET(PROJECT_VERSION 1.1)
 SET(API_VERSION 1)
 
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # using Clang
+    set( CMAKE_CXX_FLAGS " -lpthread ")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # using GCC
+    set( CMAKE_CXX_FLAGS " -pthread ")
+endif()
+
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 FIND_PACKAGE(Boost COMPONENTS unit_test_framework)
 FIND_PACKAGE(Boost REQUIRED graph filesystem thread regex system)
@@ -18,9 +27,9 @@ TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 CONFIGURE_FILE(utilmm/config/config.h.in utilmm/config/config.h)
 CONFIGURE_FILE(utilmm.pc.in utilmm.pc @ONLY)
 
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/utilmm.pc 
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/utilmm.pc
     DESTINATION lib/pkgconfig)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/utilmm/config/config.h 
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/utilmm/config/config.h
     DESTINATION include/utilmm/config)
 INSTALL(DIRECTORY utilmm/ DESTINATION include/utilmm
     PATTERN "*.in" EXCLUDE)
