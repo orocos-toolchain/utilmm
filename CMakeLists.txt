@@ -4,15 +4,6 @@ project(Util--)
 SET(PROJECT_VERSION 1.1)
 SET(API_VERSION 1)
 
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    # using Clang
-    set( CMAKE_CXX_FLAGS " -lpthread ")
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    # using GCC
-    set( CMAKE_CXX_FLAGS " -pthread ")
-endif()
-
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 FIND_PACKAGE(Boost COMPONENTS unit_test_framework)
 FIND_PACKAGE(Boost REQUIRED graph filesystem thread regex system)
