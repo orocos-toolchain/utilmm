@@ -26,6 +26,10 @@ set_target_properties(utilmm PROPERTIES
     SOVERSION ${API_VERSION}
     INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/lib)
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(utilmm Threads::Threads)
+
 target_link_libraries(utilmm ${Boost_REGEX_LIBRARY})
 target_link_libraries(utilmm ${Boost_THREAD_LIBRARY})
 target_link_libraries(utilmm ${Boost_FILESYSTEM_LIBRARY})
